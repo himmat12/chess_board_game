@@ -24,6 +24,6 @@ chess-board-game/
 |               |-- InputHandlerSpec.scala  # Unit tests for InputHandler
 |               |-- OutputHandlerSpec.scala # Unit tests for OutputHandler
 |               |-- GameLogicSpec.scala     # Unit tests for GameLogic
-|-- build.sbt                              # Scala build configuration file
+|-- Chess game.iml                         # Scala build configuration file
 |-- README.md                              # Project README file
 
