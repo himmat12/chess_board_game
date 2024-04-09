@@ -1,6 +1,7 @@
 ﻿# chess_board_game
 
 #### project structure (will be refractored)
+```
 chess-board-game/
 |-- src/
 |   |-- main/
