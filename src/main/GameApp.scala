@@ -1,12 +1,32 @@
 package main
 
-import main.models.Move
+import main.models.{Game, Move, Piece, Rank}
 
-object Game {
-  val movement = new Move()
+import scala.io.StdIn.*
+
+object GameApp {
+  val game = new Game()
+  var selectedPiece: String = ""
+  var moveTo: String = ""
 
   def main(args: Array[String]): Unit = {
-    movement.rpt(2)(println("Hello world"))
+    println(Rank.King)
+
+    /**
+     * runs game infinitely until its game over or player quits the game
+     * */
+    while (!selectedPiece.toLowerCase.equals("q")) {
+      game.initialiseGame()
+      game.printBoard(8, 8)
+      
+
+      selectedPiece = readLine("Please select the chess piece: ")
+      moveTo = readLine("Please enter the value of square in board to move the piece: ")
+
+
+    }
 
   }
+
+
 }
