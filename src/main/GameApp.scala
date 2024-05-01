@@ -6,21 +6,25 @@ import scala.io.StdIn.*
 
 object GameApp {
   val game = new Game()
-  var selectedPiece: String = ""
+  var selected: String = ""
   var moveTo: String = ""
 
   def main(args: Array[String]): Unit = {
-    println(Rank.King)
+    game.initialiseGame()
 
     /**
      * runs game infinitely until its game over or player quits the game
      * */
-    while (!selectedPiece.toLowerCase.equals("q")) {
-      game.initialiseGame()
-      game.printBoard(8, 8)
+    while (!selected.toLowerCase.equals("q")) {
+      //      game.printBoard(8, 8)
+      game.getBoardState()
+      selected = readLine("Please select the chess piece: ")
       
+      val index = game.getBoard.lastIndexWhere(e => e.symbol == selected)
+      val selectedPiece = game.getBoard(index)
 
-      selectedPiece = readLine("Please select the chess piece: ")
+      game.suggestMove(selectedPiece)
+
       moveTo = readLine("Please enter the value of square in board to move the piece: ")
 
 

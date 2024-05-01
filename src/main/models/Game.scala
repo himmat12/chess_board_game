@@ -1,6 +1,7 @@
 package main.models
 
 import main.models.Piece
+import main.utils.MoveSuggestion.*
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -10,16 +11,33 @@ class Game {
   private val line: String = "   +------------------------+   +----------------------------------+";
 
   // placeholder for board square values
-  private def placeholder(value: String): String = s" $value "
+  private def placeholder(value: String): String = f"$value  "
 
-  // chess board
-  var board: Array[Array[Int]] = Array.ofDim[Int](8, 8)
+  /**
+   * playerTurn stores the state of each player turn to move the piece
+   * which is by default white, white player always makes the first move in chess
+   * */
+  private var playerTurn = Color.White
 
-  // collection of total black pieces in board
-  private var blackPieces = ArrayBuffer[Piece]()
+  def getPlayerTurn: Color = playerTurn
 
-  // collection of total white pieces in board
-  private var whitePieces = Array[Piece]()
+  def setPlayerTurn(data: Color): Unit = playerTurn = data
+
+  /**
+   * board state stores the mapped positional values of squares in the board (a1, a2, a3 . . .)
+   * which helps to move around the chess piece in the board
+   * */
+  //  var boardState: Array[Array[Int]] = Array.ofDim[Int](8, 8)
+
+  /**
+   * game state, which means this array stores the calculated value ('char' + Int) of each mapped squares position in the board
+   * */
+  var gameState: Array[Array[Int]] = Array.ofDim[Int](8, 8)
+
+  // collection of total chess pieces in board
+  private var board = ArrayBuffer[Piece]()
+
+  def getBoard: ArrayBuffer[Piece] = board
 
   // initialising the board
   def initialiseGame(): Unit = {
@@ -55,11 +73,11 @@ class Game {
     for (x <- 0 until 8) {
       var col = 97
       for (y <- 0 until 8) {
-        board(x)(y) = col + row
-        print(board(x)(y) + " ")
+        gameState(x)(y) = col + row
+        //        print(gameState(x)(y) + " ") TODO: UNBLOCK THIS TO SEE THE RESULT
         col += 1
       }
-      println()
+      //      println() TODO: UNBLOCK THIS TO SEE THE RESULT
       row -= 1
     }
 
@@ -97,114 +115,196 @@ class Game {
      * a1 b1 C1 d1 e1 f1 g1 h1
      *
      * */
-    row = 8
-    for (x <- 0 until 8)
+    /**
+     * TODO: UNBLOCK THIS TO SEE THE RESULT
+     * */
+    //    row = 8
+    //    for (x <- 0 until 8) {
+    //      var col = 97
+    //      for (y <- 0 until 8) {
+    //        print(s"${col.toChar}${gameState(x)(y) - col} ")
+    //        col += 1
+    //      }
+    //      println()
+    //      row -= 1
+    //    }
+
+
+  }
+
+
+  /**
+   * getBoardState() prints the layout of board the, and sets the board corresponding squares values,
+   * and places all the chess pieces to their default position in the board
+   * */
+  def getBoardState(): Unit = {
+
+    /** printing the chess board mapping position */
+    var row = 8
+    for (x <- 0 until 8) {
       var col = 97
-      for (y <- 0 until 8)
-        print(s"${col.toChar}${board(x)(y) - col} ")
+      for (y <- 0 until 8) {
+        print(s"${col.toChar}${gameState(x)(y) - col} ")
         col += 1
+      }
       println()
       row -= 1
+    }
+    println()
 
-    // setting black and white squares value 0 for white and 1 for black in board
-    for (x <- 0 until 8; y <- 0 until 8)
-      if ((x + y) % 2 == 0)
-        board(x)(y) = 0
-      else
-        board(x)(y) = 1
-
-    // setting black pieces values in the board, integer values starting from 100 and so on is the value for black chess pieces
-    // which indicates the piece rank hierarchy 200 as Pawn and 205 as King
-    blackPieces.foreach(e => {
-      for (x <- 'a' to 'h'; y <- 8 to 1 by -1)
-        if ((e.positionX + e.positionY) == (x + y))
-          if (e.rank == Rank.Pawn)
-            board(x)(y) = 100
-          if (e.rank == Rank.Rook)
-            board(x)(y) = 101
-          if (e.rank == Rank.Knight)
-            board(x)(y) = 102
-          if (e.rank == Rank.Bishop)
-            board(x)(y) = 103
-          if (e.rank == Rank.Queen)
-            board(x)(y) = 104
-          if (e.rank == Rank.King)
-            board(x)(y) = 105
+    /** printing the chess board mapping position value */
+    gameState.foreach(e => {
+      e.foreach(e => print(e + " "))
+      println()
     })
 
-    // setting white pieces values in the board, integer values starting from 200 and so on is the value for black chess pieces
-    // which indicates the piece rank hierarchy 200 as Pawn and 205 as King
-    whitePieces.foreach(e => {
-      for (x <- 'a' to 'h'; y <- 8 to 1 by -1)
-        if ((e.positionX + e.positionY) == (x + y))
-          if (e.rank == Rank.Pawn)
-            board(x)(y) = 200
-          if (e.rank == Rank.Rook)
-            board(x)(y) = 201
-          if (e.rank == Rank.Knight)
-            board(x)(y) = 202
-          if (e.rank == Rank.Bishop)
-            board(x)(y) = 203
-          if (e.rank == Rank.Queen)
-            board(x)(y) = 204
-          if (e.rank == Rank.King)
-            board(x)(y) = 205
-    })
+    println()
+
+
+    /**
+     * printing the initial state of chess board with black and white pieces in their default positions in the board
+     * */
+    for (x <- 0 to 7) {
+      for (y <- 0 to 7) {
+        board.foreach(e => {
+          if (e.positionX == x && e.positionY == y) {
+            if (e.rank == Rank.Pawn && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Rook && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Knight && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Bishop && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Queen && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.King && e.color == Color.Black)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Pawn && e.color == Color.White)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Rook && e.color == Color.White)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Knight && e.color == Color.White)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Bishop && e.color == Color.White)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.Queen && e.color == Color.White)
+              print(placeholder(e.symbol))
+            if (e.rank == Rank.King && e.color == Color.White)
+              print(placeholder(e.symbol))
+
+          }
+        })
+        if (x > 1 && x < 6) {
+          if ((x + y) % 2 != 0) print(placeholder(" B ")) else print(placeholder(" W "))
+        }
+      }
+      println()
+    }
+
   }
+
 
   /**
    * setup initial chess pieces
    * */
-  def setUpChessPieces(): Unit = {
+  private def setUpChessPieces(): Unit = {
     /**
-     * setting the black pieces in board
+     * setting the black pieces position in board
      * */
-    for (i <- 'a' to 'h')
-      blackPieces.addOne(new Piece(Color.Black, Rank.Pawn, Array(MoveOption.StraightLine), i, 7))
+    for (y <- 0 to 7)
+      val value: Int = 97 + y + 7
+      board.addOne(new Piece("BP" + y, value, Color.Black, Rank.Pawn, Array(MoveOption.StraightLine), 1, y))
 
-    for (i <- 'a' to 'h' by 7)
-      blackPieces.addOne(new Piece(Color.Black, Rank.Rook, Array(MoveOption.StraightLine), i, 8))
+    for (y <- 0 to 7 by 7)
+      val value: Int = 97 + y + 8
+      board.addOne(new Piece("BR" + y, value, Color.Black, Rank.Rook, Array(MoveOption.StraightLine), 0, y))
 
-    for (i <- 'b' to 'g' by 5)
-      blackPieces.addOne(new Piece(Color.Black, Rank.Knight, Array(MoveOption.L), i, 8))
+    for (y <- 1 to 6 by 5)
+      val value: Int = 97 + y + 8
+      board.addOne(new Piece("BN" + y, value, Color.Black, Rank.Knight, Array(MoveOption.L), 0, y))
 
-    for (i <- 'c' to 'f' by 3)
-      blackPieces.addOne(new Piece(Color.Black, Rank.Bishop, Array(MoveOption.Diagonal), i, 8))
+    for (y <- 2 to 5 by 3)
+      val value: Int = 97 + y + 8
+      board.addOne(new Piece("BB" + y, value, Color.Black, Rank.Bishop, Array(MoveOption.Diagonal), 0, y))
 
-    blackPieces.addOne(new Piece(Color.Black, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 'd', 8))
+    board.addOne(new Piece("BQ3", ('d' + 8), Color.Black, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 0, 3))
 
-    blackPieces.addOne(new Piece(Color.Black, Rank.King, Array(MoveOption.StraightLine), 'e', 8))
+    board.addOne(new Piece("BK4", ('e' + 8), Color.Black, Rank.King, Array(MoveOption.StraightLine), 0, 4))
 
     /**
-     * setting the black pieces in board
+     * setting the white pieces position in board
      * */
-    for (i <- 'a' to 'h')
-      blackPieces.addOne(new Piece(Color.White, Rank.Pawn, Array(MoveOption.StraightLine), i, 2))
+    for (y <- 0 to 7)
+      val value: Int = 97 + y + 2
+      board.addOne(new Piece("WP" + y, value, Color.White, Rank.Pawn, Array(MoveOption.StraightLine), 6, y))
 
-    for (i <- 'a' to 'h' by 7)
-      blackPieces.addOne(new Piece(Color.White, Rank.Rook, Array(MoveOption.StraightLine), i, 1))
+    for (y <- 0 to 7 by 7)
+      val value: Int = 97 + y + 1
+      board.addOne(new Piece("WR" + y, value, Color.White, Rank.Rook, Array(MoveOption.StraightLine), 7, y))
 
-    for (i <- 'b' to 'g' by 5)
-      blackPieces.addOne(new Piece(Color.White, Rank.Knight, Array(MoveOption.L), i, 1))
+    for (y <- 1 to 6 by 5)
+      val value: Int = 97 + y + 1
+      board.addOne(new Piece("WN" + y, value, Color.White, Rank.Knight, Array(MoveOption.L), 7, y))
 
-    for (i <- 'c' to 'f' by 3)
-      blackPieces.addOne(new Piece(Color.White, Rank.Bishop, Array(MoveOption.Diagonal), i, 1))
+    for (y <- 2 to 5 by 3)
+      val value: Int = 97 + y + 1
+      board.addOne(new Piece("WB" + y, value, Color.White, Rank.Bishop, Array(MoveOption.Diagonal), 7, y))
 
-    blackPieces.addOne(new Piece(Color.White, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 'd', 1))
+    board.addOne(new Piece("WQ3", ('d' + 1), Color.White, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 7, 3))
 
-    blackPieces.addOne(new Piece(Color.White, Rank.King, Array(MoveOption.StraightLine), 'e', 1))
+    board.addOne(new Piece("WK4", ('e' + 1), Color.White, Rank.King, Array(MoveOption.StraightLine), 7, 4))
+  }
+
+
+  /**
+   * suggests all available moves options of selected chess piece
+   * suggested moves are returned in an Array
+   */
+  def suggestMove(piece: Piece): Unit = {
+
+    if (piece.rank == Rank.Pawn) {
+      println(gameState(piece.positionX)(piece.positionY))
+      val suggestedMoves = suggestMovePawn(piece.positionX, piece.positionY, board)
+
+      /**
+       * todo: after we get list of suggested moves we iterate the boardState and match the suggested moves list each element
+       * todo: and print the positional mapping board with suggested squares wrapped with bracket
+       * */
+    }
+//
+//    if (piece.rank == Rank.Rook) {
+//      suggestMoveRook(piece.positionX, piece.positionY)
+//    }
+//
+//    if (piece.rank == Rank.Knight) {
+//      suggestMoveKnight(piece.positionX, piece.positionY)
+//    }
+//
+//    if (piece.rank == Rank.Bishop) {
+//      suggestMoveBishop(piece.positionX, piece.positionY)
+//    }
+//
+//    if (piece.rank == Rank.Queen) {
+//      suggestMoveQueen(piece.positionX, piece.positionY)
+//    }
+//
+//    if (piece.rank == Rank.King) {
+//      suggestMoveKing(piece.positionX, piece.positionY)
+//    }
+
+    println(piece.symbol)
+    println(piece.color)
+    println(piece.rank)
+    println(piece.positionValue)
+    println(s"position: (${piece.positionX}, ${piece.positionY})")
+
   }
 
   /**
    * printBoard() prints the layout of board the the board corresponding squares values,
    * and places all the chess pieces to their current positions in the board
    * */
-
-  def setUpBoard(): Unit = {
-
-
-  }
-
   def printBoard(rows: Int, cols: Int): Unit = {
     //    println(line)
     for (y <- 8 to 1 by -1) {

@@ -89,20 +89,6 @@ class Move {
 
 
   /**
-   * moves to the given (x,y) coordinates cell position in the board,
-   * captures any opponent pieces if its in its destination position,
-   * or if the opponent piece is King then it checks the King
-   * */
-  def moveTo(x: Char, y: Int): Unit = {}
-
-  /**
-   * suggests all available moves options of selected chess piece by encasing the values of cells in board inside bracket "(a1)".
-   * to encase cells value inside bracket you can use withBrackets(value) function
-   */
-  def suggestMove(x: Char, y: Int): Unit = {}
-
-
-  /**
    * suggest straight line moves of the chess piece from its current position
    * */
   def suggestStraightLineMove(x: Char, y: Int): (Char, Int) = ('a', 1)
@@ -126,16 +112,6 @@ class Move {
   def isLegalMove(x: Char, y: Int): Boolean = false
 
 
-  /**
-   * capture(rank) removes the opponent chess piece from the board and moves the attacking chess piece to captured chess piece position
-   * except opponent's king for which it checks it
-   * */
-  def capture(rank: Rank): Unit = {
-  }
 
-  /**
-   * check() function checks the opponent chess piece King when it is in attack range
-   * */
-  def check(): Unit = {}
 
 }
