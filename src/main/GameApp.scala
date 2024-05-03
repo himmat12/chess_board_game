@@ -19,13 +19,10 @@ object GameApp {
       //      game.printBoard(8, 8)
       game.getBoardState()
       selected = readLine("Please select the chess piece: ")
-      
-      val index = game.getBoard.lastIndexWhere(e => e.symbol == selected)
-      val selectedPiece = game.getBoard(index)
 
-      game.suggestMove(selectedPiece)
+      game.suggestMove(selected)
 
-      moveTo = readLine("Please enter the value of square in board to move the piece: ")
+//      moveTo = readLine("Please enter the value of square in board to move the piece: ")
 
 
     }
