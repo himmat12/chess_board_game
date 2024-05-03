@@ -62,7 +62,6 @@ class Game {
       row -= 1
     }
 
-
     /**
      * synchronising and placing each chess piece on squares (x, y) coordinate points on chess board
      * */
@@ -128,17 +127,17 @@ class Game {
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
-//      val value: String = s"$prfx" + 8
+      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BR" + y, Color.Black, Rank.Rook, 0, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
-//      val value: String = s"$prfx" + 8
+      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BN" + y, Color.Black, Rank.Knight, 0, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
-//      val value: String = s"$prfx" + 8
+      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BB" + y, Color.Black, Rank.Bishop, 0, y))
 
     totalPieces.addOne(new Piece(0, 3, "BQ3", Color.Black, Rank.Queen, 0, 3))
@@ -181,13 +180,13 @@ class Game {
    * suggested moves are returned in an Array
    */
   def suggestMove(value: String): Unit = {
-    val index = totalPieces.lastIndexWhere(e => e.value == value)
+    val index = totalPieces.lastIndexWhere(e => e.value.toLowerCase == value.toLowerCase)
     val piece = totalPieces(index)
 
     if (piece.rank == Rank.Pawn) {
       val suggestedMoves = suggestMovePawn(piece, board)
-      println()
-      suggestedMoves.foreach(e => print(s"$e "))
+      //      println()
+      //      suggestedMoves.foreach(e => print(s"$e "))
       println()
 
       /** printing the chess pieces mapped position board with suggested move squares */
