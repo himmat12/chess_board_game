@@ -31,12 +31,12 @@ class Game {
   /**
    * boardMap for moving pieces to squares in the board which stores the array of tuple which maps "a8" to its corresponding (x,y) coordinate like ("a8", 0, 0)
    * */
-  private var boardMap = ArrayBuffer[(String, Int, Int)]()
+  private var boardMap: Array[Array[String]] = Array.ofDim[String](8, 8)
 
-  // collection of total chess pieces in pieces
-  private var pieces = ArrayBuffer[Piece]()
+  // collection of total chess pieces in board
+  private var totalPieces = ArrayBuffer[Piece]()
 
-  def getBoard: ArrayBuffer[Piece] = pieces
+  def getTotalPieces: ArrayBuffer[Piece] = totalPieces
 
   /** this function sets default space in board by initialising dummy Piece object */
   private def defaultPiece(x: Int, y: Int): Piece = {
@@ -56,7 +56,7 @@ class Game {
         board(x)(y) = defaultPiece(x, y)
         // mapping squares (x,y) coordinates corresponding to its string value like ["a8" = (0,0)]
         val prfxChar = col.toChar
-        boardMap.addOne((s"$prfxChar$row", x, y))
+        boardMap(x)(y) = s"$prfxChar$row"
         col += 1
       }
       row -= 1
@@ -68,7 +68,7 @@ class Game {
      * */
     for (x <- 0 to 7) {
       for (y <- 0 to 7) {
-        pieces.foreach(e => {
+        totalPieces.foreach(e => {
           if (e.positionX == x && e.positionY == y) {
             board(x)(y) = e
           }
@@ -86,26 +86,20 @@ class Game {
   def getBoardState(): Unit = {
 
     /** printing the chess pieces mapping position value */
-    boardMap.foreach(e => {
-      print(e._1 + " ")
-      if (e._1.head == 'h')
-        println()
-    })
+    //    for (x <- 0 to 7) {
+    //      for (y <- 0 to 7) {
+    //        print(s"${boardMap(x)(y)} ")
+    //      }
+    //      println()
+    //    }
 
-    /** printing the mapped squares positions */
-    println()
-    boardMap.foreach(e => {
-      print(s"$e ")
-      if (e._1.head == 'h')
-        println()
-    })
     println()
 
     /** printing the chess board with pieces on their initial positions */
     for (x <- 0 to 7) {
       for (y <- 0 to 7) {
-        if (board(x)(y).symbol != "" && (board(x)(y).positionX, board(x)(y).positionY) == (x, y)) {
-          print(placeholder(board(x)(y).symbol))
+        if (board(x)(y).value != "" && (board(x)(y).positionX, board(x)(y).positionY) == (x, y)) {
+          print(placeholder(board(x)(y).value))
         }
         else {
           if ((board(x)(y).positionX + board(x)(y).positionY) % 2 == 0)
@@ -116,6 +110,7 @@ class Game {
       }
       println()
     }
+    println()
   }
 
 
@@ -129,26 +124,26 @@ class Game {
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 7
-      pieces.addOne(new Piece(1, y, "BP" + y, value, Color.Black, Rank.Pawn, Array(MoveOption.StraightLine), 1, y))
+      totalPieces.addOne(new Piece(1, y, "BP" + y, value, Color.Black, Rank.Pawn, Array(MoveOption.StraightLine), 1, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 8
-      pieces.addOne(new Piece(0, y, "BR" + y, value, Color.Black, Rank.Rook, Array(MoveOption.StraightLine), 0, y))
+      totalPieces.addOne(new Piece(0, y, "BR" + y, value, Color.Black, Rank.Rook, Array(MoveOption.StraightLine), 0, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 8
-      pieces.addOne(new Piece(0, y, "BN" + y, value, Color.Black, Rank.Knight, Array(MoveOption.L), 0, y))
+      totalPieces.addOne(new Piece(0, y, "BN" + y, value, Color.Black, Rank.Knight, Array(MoveOption.L), 0, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 8
-      pieces.addOne(new Piece(0, y, "BB" + y, value, Color.Black, Rank.Bishop, Array(MoveOption.Diagonal), 0, y))
+      totalPieces.addOne(new Piece(0, y, "BB" + y, value, Color.Black, Rank.Bishop, Array(MoveOption.Diagonal), 0, y))
 
-    pieces.addOne(new Piece(0, 3, "BQ3", ("d" + 8), Color.Black, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 0, 3))
+    totalPieces.addOne(new Piece(0, 3, "BQ3", ("d" + 8), Color.Black, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 0, 3))
 
-    pieces.addOne(new Piece(0, 4, "BK4", ("e" + 8), Color.Black, Rank.King, Array(MoveOption.StraightLine), 0, 4))
+    totalPieces.addOne(new Piece(0, 4, "BK4", ("e" + 8), Color.Black, Rank.King, Array(MoveOption.StraightLine), 0, 4))
 
     /**
      * setting the white pieces position in pieces
@@ -156,26 +151,26 @@ class Game {
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 2
-      pieces.addOne(new Piece(6, y, "WP" + y, value, Color.White, Rank.Pawn, Array(MoveOption.StraightLine), 6, y))
+      totalPieces.addOne(new Piece(6, y, "WP" + y, value, Color.White, Rank.Pawn, Array(MoveOption.StraightLine), 6, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 1
-      pieces.addOne(new Piece(7, y, "WR" + y, value, Color.White, Rank.Rook, Array(MoveOption.StraightLine), 7, y))
+      totalPieces.addOne(new Piece(7, y, "WR" + y, value, Color.White, Rank.Rook, Array(MoveOption.StraightLine), 7, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 1
-      pieces.addOne(new Piece(7, y, "WN" + y, value, Color.White, Rank.Knight, Array(MoveOption.L), 7, y))
+      totalPieces.addOne(new Piece(7, y, "WN" + y, value, Color.White, Rank.Knight, Array(MoveOption.L), 7, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
       val value: String = s"$prfx" + 1
-      pieces.addOne(new Piece(7, y, "WB" + y, value, Color.White, Rank.Bishop, Array(MoveOption.Diagonal), 7, y))
+      totalPieces.addOne(new Piece(7, y, "WB" + y, value, Color.White, Rank.Bishop, Array(MoveOption.Diagonal), 7, y))
 
-    pieces.addOne(new Piece(7, 3, "WQ3", ("d" + 1), Color.White, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 7, 3))
+    totalPieces.addOne(new Piece(7, 3, "WQ3", ("d" + 1), Color.White, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 7, 3))
 
-    pieces.addOne(new Piece(7, 4, "WK4", ("e" + 1), Color.White, Rank.King, Array(MoveOption.StraightLine), 7, 4))
+    totalPieces.addOne(new Piece(7, 4, "WK4", ("e" + 1), Color.White, Rank.King, Array(MoveOption.StraightLine), 7, 4))
 
 
   }
@@ -185,11 +180,31 @@ class Game {
    * suggests all available moves options of selected chess piece
    * suggested moves are returned in an Array
    */
-  def suggestMove(piece: Piece): Unit = {
+  def suggestMove(value: String): Unit = {
+    val index = totalPieces.lastIndexWhere(e => e.value == value)
+    val piece = totalPieces(index)
 
     if (piece.rank == Rank.Pawn) {
-      println(board(piece.positionX)(piece.positionY))
-      val suggestedMoves = suggestMovePawn(piece, pieces)
+      val suggestedMoves = suggestMovePawn(piece, board)
+      println()
+      suggestedMoves.foreach(e => print(s"$e "))
+      println()
+
+      /** printing the chess pieces mapped position board with suggested move squares */
+      for (x <- 0 to 7) {
+        for (y <- 0 to 7) {
+          var flag = false
+          suggestedMoves.foreach(e => {
+            if ((x, y) == e) {
+              flag = true
+              print(placeholder(s"(${boardMap(x)(y)})"))
+            }
+          })
+          if (flag == false)
+            print(placeholder(s" ${boardMap(x)(y)} "))
+        }
+        println()
+      }
 
       /**
        * todo: after we get list of suggested moves we iterate the boardState and match the suggested moves list each element
@@ -217,11 +232,13 @@ class Game {
     //      suggestMoveKing(piece.positionX, piece.positionY)
     //    }
 
-    println(piece.symbol)
-    println(piece.color)
-    println(piece.rank)
-    println(piece.positionValue)
-    println(s"position: (${piece.positionX}, ${piece.positionY})")
+    //    println()
+    //    println(piece.value)
+    //    println(piece.color)
+    //    println(piece.rank)
+    //    println(piece.positionValue)
+    //    println(s"initial position: (${piece.initialX}, ${piece.initialY})")
+    //    println(s"current position: (${piece.positionX}, ${piece.positionY})")
 
   }
 

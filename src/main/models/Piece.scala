@@ -7,7 +7,7 @@ import main.models.Move
  * @positionY is the Y coordinate of piece position in board
  * @rank is the rank hierarchy of piece
  * */
-class Piece(var initialX: Int, var initialY: Int, var symbol: String, var positionValue: String, var color: Color, var rank: Rank, var moves: Array[MoveOption], var positionX: Int, var positionY: Int) {
+class Piece(var initialX: Int, var initialY: Int, var value: String, var positionValue: String, var color: Color, var rank: Rank, var moves: Array[MoveOption], var positionX: Int, var positionY: Int) {
 
   /**
    * promote(piece, rank) function promotes the rank of the given chess piece from its current rank to new rank
