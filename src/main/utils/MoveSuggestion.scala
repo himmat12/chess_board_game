@@ -11,121 +11,92 @@ object MoveSuggestion {
   def suggestMovePawn(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
 
     val suggestedMoves = ArrayBuffer[(Int, Int)]()
 
     /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
-    if ((piece.positionX, piece.positionY) == (piece.initialX, piece.initialY)) {
-      if (piece.color == Color.White)
-        suggestedMoves.addOne((positionX - 1, positionY))
-        suggestedMoves.addOne((positionX - 2, positionY))
-      else
-        suggestedMoves.addOne((positionX + 1, positionY))
-        suggestedMoves.addOne((positionX + 2, positionY))
-    } else {
+    if ((positionX, positionY) == (initialX, initialY)) {
       if (piece.color == Color.White) {
-        if (board(positionX - 1)(positionY).value == "" && positionX > 0)
-          suggestedMoves.addOne((positionX - 1, positionY))
+        var count = 1
+        while (board(positionX - count)(positionY).value == "" && count < 3) {
+          suggestedMoves.addOne((positionX - count, positionY))
+          count += 1
+        }
       } else {
-        if (board(positionX + 1)(positionY).value == "" && positionX < 7)
-          suggestedMoves.addOne((positionX + 1, positionY))
+        var count = 1
+        while (board(positionX + count)(positionY).value == "" && count < 3) {
+          suggestedMoves.addOne((positionX + count, positionY))
+          count += 1
+        }
       }
-
-      /** diagonal forward left (top & left square position from selected piece) */
-      if (board(positionX - 1)(positionY - 1).color != piece.color && (positionX > 0 && positionY > 0))
-        suggestedMoves.addOne((positionX - 1, positionY - 1))
-
-      /** diagonal forward right (top & right square position from selected piece) */
-      if (board(positionX - 1)(positionY + 1).color != piece.color && (positionX > 0 && positionY < 7))
-        suggestedMoves.addOne((positionX - 1, positionY + 1))
     }
+
+    /** froward move from piece current position when it is not anymore in its default position */
+    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White) {
+      if (board(positionX - 1)(positionY).value == "" && positionX > 0)
+        suggestedMoves.addOne((positionX - 1, positionY))
+    }
+    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black) {
+      if (board(positionX + 1)(positionY).value == "" && positionX < 7)
+        suggestedMoves.addOne((positionX + 1, positionY))
+    }
+
+    /** diagonal forward left (top & left square position from selected piece) */
+    if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color && (positionX > 0 && positionY > 0))
+      suggestedMoves.addOne((positionX - 1, positionY - 1))
+
+    if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color && (positionX < 7 && positionY > 0))
+      suggestedMoves.addOne((positionX + 1, positionY - 1))
+
+    /** diagonal forward right (top & right square position from selected piece) */
+    if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color && (positionX > 0 && positionY < 7))
+      suggestedMoves.addOne((positionX - 1, positionY + 1))
+
+    if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color && (positionX < 7 && positionY < 7))
+      suggestedMoves.addOne((positionX + 1, positionY + 1))
+
     suggestedMoves
   }
-  //  def suggestMovePawn(piece: Piece, pieces: ArrayBuffer[Piece]): ArrayBuffer[(Int, Int)] = {
-  //    var possibleMoves = ArrayBuffer[(Int, Int)]()
-  //    var suggestedMoves = ArrayBuffer[(Int, Int)]()
-  //
-  //    // initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move
-  //    if (piece.initialX == piece.positionX && piece.initialY == piece.positionY) {
-  //      if (piece.color == Color.White)
-  //        possibleMoves.addOne((piece.positionX, piece.positionY + 1))
-  //        possibleMoves.addOne((piece.positionX, piece.positionY + 2))
-  //      else
-  //        possibleMoves.addOne((piece.positionX, piece.positionY - 1))
-  //        possibleMoves.addOne((piece.positionX, piece.positionY - 2))
-  //    }
-  //
-  //    // diagonal move if only there are any opponent piece in that square
-  //    if (piece.color == Color.White) {
-  //      possibleMoves.addOne(piece.positionX, piece.positionY + 1)
-  //      pieces.foreach(e => {
-  //        /** todo: bug fix required */
-  //        //        if (piece.positionX + 1 && piece.positionY - 1 && e.color != piece.color) {
-  //        //          suggestedMoves.addOne((piece.positionX + 1, piece.positionY - 1))
-  //        //        }
-  //      })
-  //    } else {
-  //      possibleMoves.addOne(piece.positionX, piece.positionY - 1)
-  //      pieces.foreach(e => {
-  //        /** todo: bug fix required */
-  //        //        if (piece.positionX - 1 && piece.positionY - 1 && e.color != piece.color) {
-  //        //          suggestedMoves.addOne((piece.positionX + 1, piece.positionY - 1))
-  //        //        }
-  //      })
-  //    }
-  //
-  //    pieces.foreach(e => {
-  //      possibleMoves.foreach(move => {
-  //        if ((e.positionX, e.positionY) != move) {
-  //          suggestedMoves.addOne((e.positionX, e.positionY))
-  //        }
-  //        return suggestedMoves
-  //      })
-  //      return suggestedMoves
-  //    })
-  //
-  //    suggestedMoves
-  //  }
-  //
-
 
   /**
-   * suggestMovePawn() function suggests all legal moves for rook in its current position in pieces
+   * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
    * */
-  def suggestMoveRook(x: Int, y: Int): Array[(Int)] = {
+  def suggestMoveRook(x: Int, y: Int): Array[(Int, Int)] = {
 
-    Array(0)
+    Array((0, 0))
   }
 
   /**
-   * suggestMovePawn() function suggests all legal moves for Knight in its current position in pieces
+   * suggestMoveKnight() function suggests all legal moves for Knight in its current position in pieces
    * */
-  def suggestMoveKnight(x: Int, y: Int): Array[(Int)] = {
+  def suggestMoveKnight(x: Int, y: Int): Array[(Int, Int)] = {
 
-    Array(0)
+    Array((0, 0))
   }
 
   /**
-   * suggestMovePawn() function suggests all legal moves for bishop in its current position in pieces
+   * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
    * */
-  def suggestMoveBishop(x: Int, y: Int): Array[(Int)] = {
+  def suggestMoveBishop(x: Int, y: Int): Array[(Int, Int)] = {
 
-    Array(0)
+    Array((0, 0))
   }
 
   /**
-   * suggestMovePawn() function suggests all legal moves for queen in its current position in pieces
+   * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
    * */
-  def suggestMoveQueen(x: Int, y: Int): Array[(Int)] = {
+  def suggestMoveQueen(x: Int, y: Int): Array[(Int, Int)] = {
 
-    Array(0)
+    Array((0, 0))
   }
 
   /**
-   * suggestMovePawn() function suggests all legal moves for king in its current position in pieces
+   * suggestMoveKing() function suggests all legal moves for king in its current position in pieces
    * */
-  def suggestMoveKing(x: Int, y: Int): Array[(Int)] = {
+  def suggestMoveKing(x: Int, y: Int): Array[(Int, Int)] = {
 
-    Array(0)
+    Array((0, 0))
   }
 }

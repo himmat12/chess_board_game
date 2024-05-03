@@ -40,7 +40,7 @@ class Game {
 
   /** this function sets default space in board by initialising dummy Piece object */
   private def defaultPiece(x: Int, y: Int): Piece = {
-    val piece = new Piece(-1, -1, "", "", Color.None, Rank.None, Array(), x, y)
+    val piece = new Piece(-1, -1, "", Color.None, Rank.None, x, y)
     piece
   }
 
@@ -103,9 +103,9 @@ class Game {
         }
         else {
           if ((board(x)(y).positionX + board(x)(y).positionY) % 2 == 0)
-            print(placeholder(" W "))
+            print(placeholder(s"${boardMap(x)(y)} "))
           else
-            print(placeholder(" B "))
+            print(placeholder(s"${boardMap(x)(y)} "))
         }
       }
       println()
@@ -123,54 +123,54 @@ class Game {
      * */
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 7
-      totalPieces.addOne(new Piece(1, y, "BP" + y, value, Color.Black, Rank.Pawn, Array(MoveOption.StraightLine), 1, y))
+      //      val value: String = s"$prfx" + 7
+      totalPieces.addOne(new Piece(1, y, "BP" + y, Color.Black, Rank.Pawn, 1, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 8
-      totalPieces.addOne(new Piece(0, y, "BR" + y, value, Color.Black, Rank.Rook, Array(MoveOption.StraightLine), 0, y))
+//      val value: String = s"$prfx" + 8
+      totalPieces.addOne(new Piece(0, y, "BR" + y, Color.Black, Rank.Rook, 0, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 8
-      totalPieces.addOne(new Piece(0, y, "BN" + y, value, Color.Black, Rank.Knight, Array(MoveOption.L), 0, y))
+//      val value: String = s"$prfx" + 8
+      totalPieces.addOne(new Piece(0, y, "BN" + y, Color.Black, Rank.Knight, 0, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 8
-      totalPieces.addOne(new Piece(0, y, "BB" + y, value, Color.Black, Rank.Bishop, Array(MoveOption.Diagonal), 0, y))
+//      val value: String = s"$prfx" + 8
+      totalPieces.addOne(new Piece(0, y, "BB" + y, Color.Black, Rank.Bishop, 0, y))
 
-    totalPieces.addOne(new Piece(0, 3, "BQ3", ("d" + 8), Color.Black, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 0, 3))
+    totalPieces.addOne(new Piece(0, 3, "BQ3", Color.Black, Rank.Queen, 0, 3))
 
-    totalPieces.addOne(new Piece(0, 4, "BK4", ("e" + 8), Color.Black, Rank.King, Array(MoveOption.StraightLine), 0, 4))
+    totalPieces.addOne(new Piece(0, 4, "BK4", Color.Black, Rank.King, 0, 4))
 
     /**
      * setting the white pieces position in pieces
      * */
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 2
-      totalPieces.addOne(new Piece(6, y, "WP" + y, value, Color.White, Rank.Pawn, Array(MoveOption.StraightLine), 6, y))
+      //      val value: String = s"$prfx" + 2
+      totalPieces.addOne(new Piece(6, y, "WP" + y, Color.White, Rank.Pawn, 6, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 1
-      totalPieces.addOne(new Piece(7, y, "WR" + y, value, Color.White, Rank.Rook, Array(MoveOption.StraightLine), 7, y))
+      //      val value: String = s"$prfx" + 1
+      totalPieces.addOne(new Piece(7, y, "WR" + y, Color.White, Rank.Rook, 7, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 1
-      totalPieces.addOne(new Piece(7, y, "WN" + y, value, Color.White, Rank.Knight, Array(MoveOption.L), 7, y))
+      //      val value: String = s"$prfx" + 1
+      totalPieces.addOne(new Piece(7, y, "WN" + y, Color.White, Rank.Knight, 7, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
-      val value: String = s"$prfx" + 1
-      totalPieces.addOne(new Piece(7, y, "WB" + y, value, Color.White, Rank.Bishop, Array(MoveOption.Diagonal), 7, y))
+      //      val value: String = s"$prfx" + 1
+      totalPieces.addOne(new Piece(7, y, "WB" + y, Color.White, Rank.Bishop, 7, y))
 
-    totalPieces.addOne(new Piece(7, 3, "WQ3", ("d" + 1), Color.White, Rank.Queen, Array(MoveOption.Diagonal, MoveOption.StraightLine), 7, 3))
+    totalPieces.addOne(new Piece(7, 3, "WQ3", Color.White, Rank.Queen, 7, 3))
 
-    totalPieces.addOne(new Piece(7, 4, "WK4", ("e" + 1), Color.White, Rank.King, Array(MoveOption.StraightLine), 7, 4))
+    totalPieces.addOne(new Piece(7, 4, "WK4", Color.White, Rank.King, 7, 4))
 
 
   }
@@ -194,7 +194,13 @@ class Game {
       for (x <- 0 to 7) {
         for (y <- 0 to 7) {
           var flag = false
+          var count = 0
           suggestedMoves.foreach(e => {
+            if ((x, y) == (piece.positionX, piece.positionY) && count == 0) {
+              flag = true
+              print(placeholder(s"[${boardMap(x)(y)}]"))
+              count += 1
+            }
             if ((x, y) == e) {
               flag = true
               print(placeholder(s"(${boardMap(x)(y)})"))
@@ -206,10 +212,7 @@ class Game {
         println()
       }
 
-      /**
-       * todo: after we get list of suggested moves we iterate the boardState and match the suggested moves list each element
-       * todo: and print the positional mapping pieces with suggested squares wrapped with bracket
-       * */
+
     }
     //
     //    if (piece.rank == Rank.Rook) {
