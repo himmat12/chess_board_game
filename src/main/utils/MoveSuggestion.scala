@@ -8,54 +8,60 @@ object MoveSuggestion {
   /**
    * suggestMovePawn() function suggests all legal moves for pawn in its current position in pieces
    * */
-  def suggestMovePawn(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int)] = {
+  def suggestMovePawn(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
     val initialY = piece.initialY
 
-    val suggestedMoves = ArrayBuffer[(Int, Int)]()
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
     /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
     if ((positionX, positionY) == (initialX, initialY)) {
       if (piece.color == Color.White) {
         var count = 1
         while (board(positionX - count)(positionY).value == "" && count < 3) {
-          suggestedMoves.addOne((positionX - count, positionY))
+          suggestedMoves.addOne((positionX - count, positionY, false))
           count += 1
         }
       } else {
         var count = 1
         while (board(positionX + count)(positionY).value == "" && count < 3) {
-          suggestedMoves.addOne((positionX + count, positionY))
+          suggestedMoves.addOne((positionX + count, positionY, false))
           count += 1
         }
       }
     }
 
     /** froward move from piece current position when it is not anymore in its default position */
-    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White) {
-      if (board(positionX - 1)(positionY).value == "" && positionX > 0)
-        suggestedMoves.addOne((positionX - 1, positionY))
+    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White && positionX > 0) {
+      if (board(positionX - 1)(positionY).value == "")
+        suggestedMoves.addOne((positionX - 1, positionY, false))
     }
-    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black) {
-      if (board(positionX + 1)(positionY).value == "" && positionX < 7)
-        suggestedMoves.addOne((positionX + 1, positionY))
+    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black && positionX < 7) {
+      if (board(positionX + 1)(positionY).value == "")
+        suggestedMoves.addOne((positionX + 1, positionY, false))
     }
 
     /** diagonal forward left (top & left square position from selected piece) */
-    if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color && (positionX > 0 && positionY > 0))
-      suggestedMoves.addOne((positionX - 1, positionY - 1))
-
-    if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color && (positionX < 7 && positionY > 0))
-      suggestedMoves.addOne((positionX + 1, positionY - 1))
+    if (positionX > 0 && positionY > 0)
+      if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
+        suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+    if (positionX < 7 && positionY > 0)
+      if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
+        suggestedMoves.addOne((positionX + 1, positionY - 1, true))
 
     /** diagonal forward right (top & right square position from selected piece) */
-    if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color && (positionX > 0 && positionY < 7))
-      suggestedMoves.addOne((positionX - 1, positionY + 1))
+    if (positionX > 0 && positionY < 7)
+      if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
+        suggestedMoves.addOne((positionX - 1, positionY + 1, true))
 
-    if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color && (positionX < 7 && positionY < 7))
-      suggestedMoves.addOne((positionX + 1, positionY + 1))
+    if (positionX < 7 && positionY < 7)
+      if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
+        suggestedMoves.addOne((positionX + 1, positionY + 1, true))
 
     suggestedMoves
   }

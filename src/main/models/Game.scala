@@ -39,14 +39,15 @@ class Game {
   def getTotalPieces: ArrayBuffer[Piece] = totalPieces
 
   /** this function sets default space in board by initialising dummy Piece object */
-  private def defaultPiece(x: Int, y: Int): Piece = {
-    val piece = new Piece(-1, -1, "", Color.None, Rank.None, x, y)
+  private def defaultPiece(posX: Int, posY: Int): Piece = {
+    val piece = new Piece(-1, -1, "", Color.None, Rank.None, posX, posY)
     piece
   }
 
   // initialising the game
   def initialiseGame(): Unit = {
-    setUpChessPieces()
+    //    setupDefaultFormation()
+    setupPawnFormation()
 
     var row = 8
     for (x <- 0 until 8) {
@@ -82,7 +83,7 @@ class Game {
    * getBoardState() prints the layout of board mapped squares position coordinates values,
    * and places all the chess pieces to their default position in the pieces
    * */
-  def getBoardState(): Unit = {
+  def getInitialBoardState(): Unit = {
 
     /** printing the chess pieces mapping position value */
     //    for (x <- 0 to 7) {
@@ -94,7 +95,7 @@ class Game {
 
     println()
 
-    /** printing the chess board with pieces on their initial positions */
+    /** printing the chess board with pieces on their setup positions */
     for (x <- 0 to 7) {
       for (y <- 0 to 7) {
         if (board(x)(y).value != "" && (board(x)(y).positionX, board(x)(y).positionY) == (x, y)) {
@@ -102,9 +103,11 @@ class Game {
         }
         else {
           if ((board(x)(y).positionX + board(x)(y).positionY) % 2 == 0)
-            print(placeholder(s"${boardMap(x)(y)} "))
+          //            print(placeholder(s"${boardMap(x)(y)} "))
+            print(placeholder(" W "))
           else
-            print(placeholder(s"${boardMap(x)(y)} "))
+          //            print(placeholder(s"${boardMap(x)(y)} "))
+            print(placeholder(" B "))
         }
       }
       println()
@@ -114,30 +117,26 @@ class Game {
 
 
   /**
-   * setup initial chess pieces
+   * setup default chess pieces in the board
    * */
-  private def setUpChessPieces(): Unit = {
+  private def setupDefaultFormation(): Unit = {
     /**
      * setting the black pieces position in pieces
      * */
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 7
       totalPieces.addOne(new Piece(1, y, "BP" + y, Color.Black, Rank.Pawn, 1, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BR" + y, Color.Black, Rank.Rook, 0, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BN" + y, Color.Black, Rank.Knight, 0, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 8
       totalPieces.addOne(new Piece(0, y, "BB" + y, Color.Black, Rank.Bishop, 0, y))
 
     totalPieces.addOne(new Piece(0, 3, "BQ3", Color.Black, Rank.Queen, 0, 3))
@@ -149,22 +148,18 @@ class Game {
      * */
     for (y <- 0 to 7)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 2
       totalPieces.addOne(new Piece(6, y, "WP" + y, Color.White, Rank.Pawn, 6, y))
 
     for (y <- 0 to 7 by 7)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 1
       totalPieces.addOne(new Piece(7, y, "WR" + y, Color.White, Rank.Rook, 7, y))
 
     for (y <- 1 to 6 by 5)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 1
       totalPieces.addOne(new Piece(7, y, "WN" + y, Color.White, Rank.Knight, 7, y))
 
     for (y <- 2 to 5 by 3)
       val prfx = (97 + y).toChar
-      //      val value: String = s"$prfx" + 1
       totalPieces.addOne(new Piece(7, y, "WB" + y, Color.White, Rank.Bishop, 7, y))
 
     totalPieces.addOne(new Piece(7, 3, "WQ3", Color.White, Rank.Queen, 7, 3))
@@ -175,14 +170,89 @@ class Game {
   }
 
 
+  /** setup pawns formation */
+
+  private def setupPawnFormation(): Unit = {
+    /**
+     * setting the black pieces position in pieces
+     * */
+    totalPieces.addOne(new Piece(1, 3, "BP3", Color.Black, Rank.Pawn, 1, 3))
+    totalPieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
+    totalPieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
+
+    /**
+     * setting the black pieces position in pieces
+     * */
+    totalPieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 2, 2))
+    totalPieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
+  }
+
+
+  /**
+   * moves to the given (position) eg: (x, y) coordinates square position in the board,
+   * captures any opponent pieces if its in its destination position
+   * */
+  def moveTo(pos: String, piece: Piece): Unit = {
+    val suggestedMoves = suggestMovePawn(piece, board).map(e => (e._1, e._2))
+
+    val posCoordinate = decryptFromPoseString(pos)
+    val x = posCoordinate._1
+    val y = posCoordinate._2
+
+    // capturing previous position of piece in board
+    val lastPosX = piece.positionX
+    val lastPosY = piece.positionY
+
+    if (suggestedMoves.contains((x, y))) {
+
+      // if there is any other opponent piece in new position then it will remove it (capture it)
+      //    println(board(x)(y).color)
+      //    println(board(x)(y).value)
+      if (board(x)(y).color != piece.color && board(x)(y).color != Color.None)
+        val opponentPieceIndex = totalPieces.indexWhere(e => e.value == board(x)(y).value)
+        totalPieces.remove(opponentPieceIndex)
+
+      // updating piece current position to new destination (x, y) position
+      piece.positionX = x
+      piece.positionY = y
+      board(x)(y) = piece
+
+
+      // resetting previous piece position in board to default piece value
+      board(lastPosX)(lastPosY) = defaultPiece(lastPosX, lastPosY)
+
+      //    println()
+      //    println(board(lastPosX)(lastPosY).initialX)
+      //    println(totalPieces.length)
+      //    totalPieces.foreach(e => print(e.value + " "))
+      //    println()
+    } else {
+      println(s"Invalid move: [${piece.value}] from (${encryptToPoseString(lastPosX, lastPosY)}) to ($pos)*")
+    }
+  }
+
+  /** decrypts (converts) the board position string value "a8" and so on to (x,y) tuple (Int, Int) */
+  private def decryptFromPoseString(pos: String): (Int, Int) = {
+    val x = 8 - s"${pos.reverse.head}".toInt
+    val y = pos.head.toLower.toInt - 97
+    (x, y)
+  }
+
+  /** encrypts (revert) the board position (x,y) coordinates value to "a8" string value */
+  private def encryptToPoseString(x: Int, y: Int): String = {
+    val str1 = (97 + y).toChar
+    val str2 = 8 - x
+    s"$str1$str2"
+  }
+
+  /** pawn piece promotion checker */
+  private def checkPawnPromotion(): Unit = {}
+
   /**
    * suggests all available moves options of selected chess piece
    * suggested moves are returned in an Array
    */
-  def suggestMove(value: String): Unit = {
-    val index = totalPieces.lastIndexWhere(e => e.value.toLowerCase == value.toLowerCase)
-    val piece = totalPieces(index)
-
+  def suggestMove(piece: Piece): Unit = {
     if (piece.rank == Rank.Pawn) {
       val suggestedMoves = suggestMovePawn(piece, board)
       //      println()
@@ -190,26 +260,40 @@ class Game {
       println()
 
       /** printing the chess pieces mapped position board with suggested move squares */
+      var isPiecePosMarked = false
       for (x <- 0 to 7) {
         for (y <- 0 to 7) {
           var flag = false
           var count = 0
-          suggestedMoves.foreach(e => {
-            if ((x, y) == (piece.positionX, piece.positionY) && count == 0) {
-              flag = true
-              print(placeholder(s"[${boardMap(x)(y)}]"))
-              count += 1
-            }
-            if ((x, y) == e) {
-              flag = true
-              print(placeholder(s"(${boardMap(x)(y)})"))
-            }
-          })
-          if (flag == false)
-            print(placeholder(s" ${boardMap(x)(y)} "))
+
+          if (suggestedMoves.isEmpty && !isPiecePosMarked && (x, y) == (piece.positionX, piece.positionY)) {
+            print(placeholder(s"[${boardMap(x)(y)}]"))
+            isPiecePosMarked = true
+          }
+          else {
+            suggestedMoves.foreach(e => {
+              if ((x, y) == (piece.positionX, piece.positionY) && count == 0) {
+                flag = true
+                print(placeholder(s"[${boardMap(x)(y)}]"))
+                count += 1
+              }
+              if ((x, y, false) == e) {
+                flag = true
+                print(placeholder(s"(${boardMap(x)(y)})"))
+              }
+
+              if ((x, y, true) == e) {
+                flag = true
+                print(placeholder(s"{${boardMap(x)(y)}}"))
+              }
+            })
+            if (!flag)
+              print(placeholder(s" ${boardMap(x)(y)} "))
+          }
         }
         println()
       }
+      println()
 
 
     }
@@ -290,3 +374,4 @@ class Game {
   }
 
 }
+
