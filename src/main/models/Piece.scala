@@ -16,15 +16,6 @@ class Piece(var initialX: Int, var initialY: Int, var value: String, var color: 
   def promoteTo(newRank: Rank): Unit = {
     rank = newRank
   }
-
-  /**
-   * moves to the given (position) eg: "b4" coordinates cell position in the board,
-   * captures any opponent pieces if its in its destination position,
-   * or if the opponent piece is King then it checks the King
-   * */
-  def moveTo(position: String): Unit = {}
-
-
 }
 
 //val king = new Piece(Color.Black, Rank.King, Array(MoveOption.StraightLine), 'e', 1)
