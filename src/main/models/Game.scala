@@ -2,6 +2,7 @@ package main.models
 
 import main.models.Piece
 import main.utils.MoveSuggestion.*
+import main.utils.PlayerTurn
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -12,16 +13,6 @@ class Game {
 
   // placeholder for pieces square values
   private def placeholder(value: String): String = f"$value  "
-
-  /**
-   * playerTurn stores the state of each player turn to move the piece
-   * which is by default white, white player always makes the first move in chess
-   * */
-  private var playerTurn = Color.White
-
-  def getPlayerTurn: Color = playerTurn
-
-  def setPlayerTurn(data: Color): Unit = playerTurn = data
 
   /**
    * board array stores the calculated value ('char' + Int) of each mapped squares position in the pieces
@@ -93,7 +84,7 @@ class Game {
     //      println()
     //    }
 
-    println()
+    printPlayerTurn()
 
     /** printing the chess board with pieces on their setup positions */
     for (x <- 0 to 7) {
@@ -115,6 +106,15 @@ class Game {
     println()
   }
 
+  /** helper function which prints the current player turn */
+  private def printPlayerTurn(): Unit = {
+    println()
+
+    if (PlayerTurn.get == Color.White)
+      println("Player: [White Piece]")
+    else
+      println(" Player: [Black Piece]               ")
+  }
 
   /**
    * setup default chess pieces in the board
@@ -193,7 +193,7 @@ class Game {
    * captures any opponent pieces if its in its destination position
    * */
   def moveTo(pos: String, piece: Piece): Unit = {
-    val suggestedMoves = suggestMovePawn(piece, board).map(e => (e._1, e._2))
+    val suggestedMoves = suggestMoveAlt(piece).map(e => (e._1, e._2))
 
     val posCoordinate = decryptFromPoseString(pos)
     val x = posCoordinate._1
@@ -203,7 +203,7 @@ class Game {
     val lastPosX = piece.positionX
     val lastPosY = piece.positionY
 
-    if (suggestedMoves.contains((x, y))) {
+    if (suggestedMoves.contains((x, y)) && board(x)(y) != board(lastPosX)(lastPosY)) {
 
       // if there is any other opponent piece in new position then it will remove it (capture it)
       //    println(board(x)(y).color)
@@ -226,10 +226,43 @@ class Game {
       //    println(totalPieces.length)
       //    totalPieces.foreach(e => print(e.value + " "))
       //    println()
+
+      PlayerTurn.toggle()
     } else {
       println(s"Invalid move: [${piece.value}] from (${encryptToPoseString(lastPosX, lastPosY)}) to ($pos)*")
     }
   }
+
+  /** helper function for moveTo() function which generates suggested moves for selected piece and returns the array of moves */
+  private def suggestMoveAlt(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+    if (piece.rank == Rank.Pawn)
+      suggestedMoves = suggestMovePawn(piece, board)
+
+    //
+    //    if (piece.rank == Rank.Rook) {
+    //      suggestMoveRook(piece.positionX, piece.positionY)
+    //    }
+    //
+    //    if (piece.rank == Rank.Knight) {
+    //      suggestMoveKnight(piece.positionX, piece.positionY)
+    //    }
+    //
+    //    if (piece.rank == Rank.Bishop) {
+    //      suggestMoveBishop(piece.positionX, piece.positionY)
+    //    }
+    //
+    //    if (piece.rank == Rank.Queen) {
+    //      suggestMoveQueen(piece.positionX, piece.positionY)
+    //    }
+    //
+    //    if (piece.rank == Rank.King) {
+    //      suggestMoveKing(piece.positionX, piece.positionY)
+    //    }
+
+    suggestedMoves
+  }
+
 
   /** decrypts (converts) the board position string value "a8" and so on to (x,y) tuple (Int, Int) */
   private def decryptFromPoseString(pos: String): (Int, Int) = {
@@ -257,7 +290,8 @@ class Game {
       val suggestedMoves = suggestMovePawn(piece, board)
       //      println()
       //      suggestedMoves.foreach(e => print(s"$e "))
-      println()
+
+      printPlayerTurn()
 
       /** printing the chess pieces mapped position board with suggested move squares */
       var isPiecePosMarked = false

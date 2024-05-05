@@ -1,7 +1,9 @@
 package main.utils
 
+import main.models.{Game, Piece}
+
+import scala.collection.mutable.ArrayBuffer
 import scala.io.StdIn.*
-import scala.util.matching.Regex
 import scala.util.matching.Regex.*
 
 object InputValidator {
@@ -19,7 +21,12 @@ object InputValidator {
   }
 
   /** todo: function comment description and validation logic implementation */
-  def validatePieceStr(): String = {
-    ""
+  def isValidPieceStr(pieceStr: String, pieces: ArrayBuffer[Piece]): Boolean = {
+    val filteredList = pieces.filter(e => e.value.toLowerCase == pieceStr.toLowerCase)
+    if (filteredList.isEmpty)
+      false
+    else
+      true
   }
 }
+

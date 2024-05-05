@@ -2,6 +2,7 @@ package main
 
 import main.models.{Game, Move, Piece, Rank}
 import main.utils.InputValidator.*
+import main.utils.PlayerTurn
 
 import scala.io.StdIn.*
 import scala.util.matching.Regex
@@ -22,17 +23,28 @@ object GameApp {
       game.getInitialBoardState()
 
       selected = readLine("Please select the chess piece: ")
-      val index = game.getTotalPieces.indexWhere(e => e.value.toLowerCase == selected.toLowerCase)
-      val selectedPiece = game.getTotalPieces(index)
-      game.suggestMove(selectedPiece)
-
-      newPos = readLine("Enter the position value to move the piece: ")
-
-      while (!isValidPoseStr(newPos)) {
-        newPos = readLine("Enter the position value to move the piece: ")
+      while (!isValidPieceStr(selected, game.getTotalPieces)) {
+        println(s"Invalid piece: [$selected] piece do not exists on board!")
+        selected = readLine("Please select the chess piece: ")
       }
 
-      game.moveTo(newPos, selectedPiece)
+      val index = game.getTotalPieces.indexWhere(e => e.value.toLowerCase == selected.toLowerCase)
+      val selectedPiece = game.getTotalPieces(index)
+
+      if (PlayerTurn.get == selectedPiece.color) {
+        game.suggestMove(selectedPiece)
+
+        newPos = readLine("Enter the position value to move the piece: ")
+
+        while (!isValidPoseStr(newPos)) {
+          println(s"Invalid position: '$newPos' position do not exists in board!")
+          newPos = readLine("Enter the position value to move the piece: ")
+        }
+
+        game.moveTo(newPos, selectedPiece)
+      }else{
+        println(s"[${PlayerTurn.get} Piece turn]: You cannot select [${selectedPiece.color} Piece]!")
+      }
 
     }
 
