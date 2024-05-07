@@ -14,7 +14,7 @@ object InputValidator {
   def isValidPoseStr(positionStr: String): Boolean = {
     val strFormat = "[a-h][1-8]".r
     val isMatch = strFormat.pattern.matcher(positionStr).matches()
-    if (isMatch)
+    if (isMatch || positionStr == "switch")
       true
     else
       false
