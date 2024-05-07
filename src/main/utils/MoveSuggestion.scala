@@ -79,7 +79,7 @@ object MoveSuggestion {
    * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
    * */
   def suggestMoveRook(x: Int, y: Int): Array[(Int, Int)] = {
-
+    /** TODO: Rook move generation algorithm */
     Array((0, 0))
   }
 
