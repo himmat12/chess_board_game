@@ -109,11 +109,7 @@ class Game {
   /** helper function which prints the current player turn */
   private def printPlayerTurn(): Unit = {
     println()
-
-    if (PlayerTurn.get == Color.White)
-      println("Player: [White Piece]")
-    else
-      println(" Player: [Black Piece]               ")
+    println(s"Player: [${PlayerTurn.get}]\nSelected: [${PlayerTurn.getSelectedPiece}]")
   }
 
   /**
@@ -179,11 +175,13 @@ class Game {
     totalPieces.addOne(new Piece(1, 3, "BP3", Color.Black, Rank.Pawn, 1, 3))
     totalPieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
     totalPieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
+    totalPieces.addOne(new Piece(1, 6, "BP6", Color.Black, Rank.Pawn, 5, 6))
 
     /**
      * setting the black pieces position in pieces
      * */
     totalPieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 2, 2))
+    totalPieces.addOne(new Piece(6, 1, "WP1", Color.White, Rank.Pawn, 1, 2))
     totalPieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
   }
 
@@ -229,7 +227,8 @@ class Game {
 
       PlayerTurn.toggle()
     } else {
-      println(s"Invalid move: [${piece.value}] from (${encryptToPoseString(lastPosX, lastPosY)}) to ($pos)*")
+      PlayerTurn.resetSelectedPiece()
+      println(s"Illegal move: [${piece.value}] cannot move from position (${encryptToPoseString(lastPosX, lastPosY)}) to ($pos)*")
     }
   }
 

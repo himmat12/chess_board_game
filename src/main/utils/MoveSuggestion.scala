@@ -46,22 +46,31 @@ object MoveSuggestion {
         suggestedMoves.addOne((positionX + 1, positionY, false))
     }
 
-    /** diagonal forward left (top & left square position from selected piece) */
-    if (positionX > 0 && positionY > 0)
-      if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
-        suggestedMoves.addOne((positionX - 1, positionY - 1, true))
-    if (positionX < 7 && positionY > 0)
-      if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
-        suggestedMoves.addOne((positionX + 1, positionY - 1, true))
+    /** white piece diagonal move */
+    if (piece.color == Color.White) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      if (positionX > 0 && positionY > 0)
+        if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
+          suggestedMoves.addOne((positionX - 1, positionY - 1, true))
 
-    /** diagonal forward right (top & right square position from selected piece) */
-    if (positionX > 0 && positionY < 7)
-      if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
-        suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+      /** diagonal right-up right (top & right square position from selected piece) */
+      if (positionX > 0 && positionY < 7)
+        if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
+          suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+    }
 
-    if (positionX < 7 && positionY < 7)
-      if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
-        suggestedMoves.addOne((positionX + 1, positionY + 1, true))
+    /** black piece diagonal move */
+    if (piece.color == Color.Black) {
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      if (positionX < 7 && positionY < 7)
+        if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
+          suggestedMoves.addOne((positionX + 1, positionY + 1, true))
+
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      if (positionX < 7 && positionY > 0)
+        if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
+          suggestedMoves.addOne((positionX + 1, positionY - 1, true))
+    }
 
     suggestedMoves
   }
@@ -70,7 +79,7 @@ object MoveSuggestion {
    * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
    * */
   def suggestMoveRook(x: Int, y: Int): Array[(Int, Int)] = {
-
+    /** TODO: Rook move generation algorithm */
     Array((0, 0))
   }
 

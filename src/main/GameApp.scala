@@ -23,9 +23,11 @@ object GameApp {
       game.getInitialBoardState()
 
       selected = readLine("Please select the chess piece: ")
+      PlayerTurn.setSelectedPiece(selected)
       while (!isValidPieceStr(selected, game.getTotalPieces)) {
         println(s"Invalid piece: [$selected] piece do not exists on board!")
         selected = readLine("Please select the chess piece: ")
+        PlayerTurn.setSelectedPiece(selected)
       }
 
       val index = game.getTotalPieces.indexWhere(e => e.value.toLowerCase == selected.toLowerCase)
@@ -34,20 +36,28 @@ object GameApp {
       if (PlayerTurn.get == selectedPiece.color) {
         game.suggestMove(selectedPiece)
 
-        newPos = readLine("Enter the position value to move the piece: ")
+        newPos = readLine("Enter the position value to move the piece or type 'switch' to select other piece: ")
 
         while (!isValidPoseStr(newPos)) {
-          println(s"Invalid position: '$newPos' position do not exists in board!")
-          newPos = readLine("Enter the position value to move the piece: ")
+          if (newPos != "switch")
+            println(s"Invalid position: '$newPos' position do not exists in board!")
+            newPos = readLine("Enter the position value to move the piece or type 'switch' to select other piece: ")
+          else
+            PlayerTurn.resetSelectedPiece()
+            return
         }
 
-        game.moveTo(newPos, selectedPiece)
-      }else{
+        if (newPos != "switch")
+          game.moveTo(newPos, selectedPiece)
+        else
+          PlayerTurn.resetSelectedPiece()
+
+      } else {
+        PlayerTurn.resetSelectedPiece()
         println(s"[${PlayerTurn.get} Piece turn]: You cannot select [${selectedPiece.color} Piece]!")
+
       }
-
     }
-
   }
 
 

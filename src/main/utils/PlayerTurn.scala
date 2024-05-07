@@ -8,7 +8,7 @@ import main.models.Color
  * */
 object PlayerTurn {
   private var player = Color.White
-  private var isWhite = true
+  private var selectedPiece = "None"
 
   def get: Color = player
 
@@ -20,4 +20,14 @@ object PlayerTurn {
   }
 
   def set(playerColor: Color): Unit = player = playerColor
+
+  def getSelectedPiece: String = selectedPiece
+
+  def setSelectedPiece(str: String): Unit = {
+    selectedPiece = str
+  }
+
+  def resetSelectedPiece(): Unit = {
+    selectedPiece = "None"
+  }
 }
