@@ -15,6 +15,11 @@ class Game {
   private def placeholder(value: String): String = f"$value  "
 
   /**
+   * withBrackets(value) takes string value and wraps it  inside bracket
+   * */
+  private def withBrackets(value: String): String = s"($value)"
+
+  /**
    * board array stores the calculated value ('char' + Int) of each mapped squares position in the pieces
    * */
   var board: Array[Array[Piece]] = Array.ofDim[Piece](8, 8)
@@ -38,7 +43,8 @@ class Game {
   // initialising the game
   def initialiseGame(): Unit = {
     //    setupDefaultFormation()
-    setupPawnFormation()
+    //    setupPawnFormation()
+    setupRookFormation()
 
     var row = 8
     for (x <- 0 until 8) {
@@ -186,6 +192,27 @@ class Game {
   }
 
 
+  /** setup pawns formation */
+
+  private def setupRookFormation(): Unit = {
+    /**
+     * setting the black pieces position in pieces
+     * */
+    totalPieces.addOne(new Piece(0, 0, "BR0", Color.Black, Rank.Rook, 0, 0))
+    totalPieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
+    totalPieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
+    totalPieces.addOne(new Piece(1, 6, "BP6", Color.Black, Rank.Pawn, 5, 6))
+
+    /**
+     * setting the black pieces position in pieces
+     * */
+    totalPieces.addOne(new Piece(7, 7, "WR7", Color.White, Rank.Rook, 7, 7))
+    totalPieces.addOne(new Piece(7, 0, "WR0", Color.White, Rank.Rook, 3, 4))
+    totalPieces.addOne(new Piece(6, 1, "WP1", Color.White, Rank.Pawn, 1, 2))
+    totalPieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
+  }
+
+
   /**
    * moves to the given (position) eg: (x, y) coordinates square position in the board,
    * captures any opponent pieces if its in its destination position
@@ -235,13 +262,13 @@ class Game {
   /** helper function for moveTo() function which generates suggested moves for selected piece and returns the array of moves */
   private def suggestMoveAlt(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-    if (piece.rank == Rank.Pawn)
+    if (piece.rank == Rank.Pawn) {
       suggestedMoves = suggestMovePawn(piece, board)
+    }
 
-    //
-    //    if (piece.rank == Rank.Rook) {
-    //      suggestMoveRook(piece.positionX, piece.positionY)
-    //    }
+    if (piece.rank == Rank.Rook) {
+      suggestMoveRook(piece, board)
+    }
     //
     //    if (piece.rank == Rank.Knight) {
     //      suggestMoveKnight(piece.positionX, piece.positionY)
@@ -285,12 +312,12 @@ class Game {
    * suggested moves are returned in an Array
    */
   def suggestMove(piece: Piece): Unit = {
+    printPlayerTurn()
+
     if (piece.rank == Rank.Pawn) {
       val suggestedMoves = suggestMovePawn(piece, board)
       //      println()
       //      suggestedMoves.foreach(e => print(s"$e "))
-
-      printPlayerTurn()
 
       /** printing the chess pieces mapped position board with suggested move squares */
       var isPiecePosMarked = false
@@ -330,9 +357,53 @@ class Game {
 
 
     }
-    //
+
+    if (piece.rank == Rank.Rook) {
+      val suggestedMoves = suggestMoveRook(piece, board)
+      //      println()
+      //      suggestedMoves.foreach(e => print(s"$e "))
+
+      /** printing the chess pieces mapped position board with suggested move squares */
+      var isPiecePosMarked = false
+      for (x <- 0 to 7) {
+        for (y <- 0 to 7) {
+          var flag = false
+          var count = 0
+
+          if (suggestedMoves.isEmpty && !isPiecePosMarked && (x, y) == (piece.positionX, piece.positionY)) {
+            print(placeholder(s"[${boardMap(x)(y)}]"))
+            isPiecePosMarked = true
+          }
+          else {
+            suggestedMoves.foreach(e => {
+              if ((x, y) == (piece.positionX, piece.positionY) && count == 0) {
+                flag = true
+                print(placeholder(s"[${boardMap(x)(y)}]"))
+                count += 1
+              }
+              if ((x, y, false) == e) {
+                flag = true
+                print(placeholder(s"(${boardMap(x)(y)})"))
+              }
+
+              if ((x, y, true) == e) {
+                flag = true
+                print(placeholder(s"{${boardMap(x)(y)}}"))
+              }
+            })
+            if (!flag)
+              print(placeholder(s" ${boardMap(x)(y)} "))
+          }
+        }
+        println()
+      }
+      println()
+
+
+    }
+
     //    if (piece.rank == Rank.Rook) {
-    //      suggestMoveRook(piece.positionX, piece.positionY)
+    //      val suggestedMoves = suggestMoveRook(piece, board)
     //    }
     //
     //    if (piece.rank == Rank.Knight) {
@@ -359,6 +430,7 @@ class Game {
     //    println(s"initial position: (${piece.initialX}, ${piece.initialY})")
     //    println(s"current position: (${piece.positionX}, ${piece.positionY})")
 
+    PlayerTurn.resetSelectedPiece()
   }
 
   /**

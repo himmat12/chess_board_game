@@ -42,20 +42,13 @@ object GameApp {
           if (newPos != "switch")
             println(s"Invalid position: '$newPos' position do not exists in board!")
             newPos = readLine("Enter the position value to move the piece or type 'switch' to select other piece: ")
-          else
-            PlayerTurn.resetSelectedPiece()
-            return
         }
 
         if (newPos != "switch")
           game.moveTo(newPos, selectedPiece)
-        else
-          PlayerTurn.resetSelectedPiece()
-
       } else {
         PlayerTurn.resetSelectedPiece()
         println(s"[${PlayerTurn.get} Piece turn]: You cannot select [${selectedPiece.color} Piece]!")
-
       }
     }
   }

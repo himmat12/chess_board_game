@@ -3,6 +3,7 @@ package main.utils
 import main.models.{Color, Piece}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.boundary
 
 object MoveSuggestion {
   /**
@@ -78,40 +79,250 @@ object MoveSuggestion {
   /**
    * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
    * */
-  def suggestMoveRook(x: Int, y: Int): Array[(Int, Int)] = {
-    /** TODO: Rook move generation algorithm */
-    Array((0, 0))
+  def suggestMoveRook(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+    val positionX = piece.positionX
+    val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
+
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    /** WHITE PIECE */
+
+    /** front movement */
+    if (positionX > 0 && piece.color == Color.White) {
+      boundary {
+        for (x <- positionX to 0 by -1) {
+          val frontSquare = board(x)(positionY)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((x, positionY, false))
+          }
+          if (frontSquare.color == Color.Black) {
+            suggestedMoves.addOne((x, positionY, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((x, positionY, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** right movement */
+    if (positionY < 7 && piece.color == Color.White) {
+      boundary {
+        for (y <- positionY to 7 by 1) {
+          val frontSquare = board(positionX)(y)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((positionX, y, false))
+          }
+          if (frontSquare.color == Color.Black) {
+            suggestedMoves.addOne((positionX, y, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((positionX, y, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** back movement */
+    if (positionX < 7 && piece.color == Color.White) {
+      boundary {
+        for (x <- positionX to 7 by 1) {
+          val frontSquare = board(x)(positionY)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((x, positionY, false))
+          }
+          if (frontSquare.color == Color.Black) {
+            suggestedMoves.addOne((x, positionY, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((x, positionY, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** left movement */
+    if (positionY > 0 && piece.color == Color.White) {
+      boundary {
+        for (y <- positionY to 7 by -1) {
+          val frontSquare = board(positionX)(y)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((positionX, y, false))
+          }
+          if (frontSquare.color == Color.Black) {
+            suggestedMoves.addOne((positionX, y, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((positionX, y, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+
+    /** BLACK PIECE */
+
+    /** front movement */
+    if (positionX > 0 && piece.color == Color.Black) {
+      boundary {
+        for (x <- positionX to 0 by -1) {
+          val frontSquare = board(x)(positionY)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((x, positionY, false))
+          }
+          if (frontSquare.color == Color.White) {
+            suggestedMoves.addOne((x, positionY, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((x, positionY, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** right movement */
+    if (positionY < 7 && piece.color == Color.Black) {
+      boundary {
+        for (y <- positionY to 7 by 1) {
+          val frontSquare = board(positionX)(y)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((positionX, y, false))
+          }
+          if (frontSquare.color == Color.White) {
+            suggestedMoves.addOne((positionX, y, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((positionX, y, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** back movement */
+    if (positionX < 7 && piece.color == Color.Black) {
+      boundary {
+        for (x <- positionX to 7 by 1) {
+          val frontSquare = board(x)(positionY)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((x, positionY, false))
+          }
+          if (frontSquare.color == Color.White) {
+            suggestedMoves.addOne((x, positionY, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((x, positionY, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    /** left movement */
+    if (positionY > 0 && piece.color == Color.Black) {
+      boundary {
+        for (y <- positionY to 7 by -1) {
+          val frontSquare = board(positionX)(y)
+          if (frontSquare.color == Color.None) {
+            suggestedMoves.addOne((positionX, y, false))
+          }
+          if (frontSquare.color == Color.White) {
+            suggestedMoves.addOne((positionX, y, true))
+            boundary.break()
+          }
+          if (frontSquare.color == piece.color) {
+            suggestedMoves.addOne((positionX, y, false))
+            boundary.break()
+          }
+        }
+      }
+    }
+
+    suggestedMoves
   }
 
   /**
    * suggestMoveKnight() function suggests all legal moves for Knight in its current position in pieces
    * */
-  def suggestMoveKnight(x: Int, y: Int): Array[(Int, Int)] = {
+  def suggestMoveKnight(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+    val positionX = piece.positionX
+    val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
 
-    Array((0, 0))
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    suggestedMoves
   }
 
   /**
    * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
    * */
-  def suggestMoveBishop(x: Int, y: Int): Array[(Int, Int)] = {
+  def suggestMoveBishop(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+    val positionX = piece.positionX
+    val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
 
-    Array((0, 0))
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    suggestedMoves
   }
 
   /**
    * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
    * */
-  def suggestMoveQueen(x: Int, y: Int): Array[(Int, Int)] = {
+  def suggestMoveQueen(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+    val positionX = piece.positionX
+    val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
 
-    Array((0, 0))
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    suggestedMoves
   }
 
   /**
    * suggestMoveKing() function suggests all legal moves for king in its current position in pieces
    * */
-  def suggestMoveKing(x: Int, y: Int): Array[(Int, Int)] = {
+  def suggestMoveKing(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+    val positionX = piece.positionX
+    val positionY = piece.positionY
+    val initialX = piece.initialX
+    val initialY = piece.initialY
 
-    Array((0, 0))
+    /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
+     * check on square in board in that given x , y coordinates
+     * */
+    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    suggestedMoves
   }
 }
