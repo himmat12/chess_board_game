@@ -267,7 +267,7 @@ class Game {
     }
 
     if (piece.rank == Rank.Rook) {
-      suggestMoveRook(piece, board)
+      suggestedMoves = suggestMoveRook(piece, board)
     }
     //
     //    if (piece.rank == Rank.Knight) {

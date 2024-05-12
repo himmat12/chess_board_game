@@ -95,7 +95,7 @@ object MoveSuggestion {
     /** front movement */
     if (positionX > 0 && piece.color == Color.White) {
       boundary {
-        for (x <- positionX to 0 by -1) {
+        for (x <- (positionX - 1) to 0 by -1) {
           val frontSquare = board(x)(positionY)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((x, positionY, false))
@@ -104,10 +104,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((x, positionY, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -115,7 +113,7 @@ object MoveSuggestion {
     /** right movement */
     if (positionY < 7 && piece.color == Color.White) {
       boundary {
-        for (y <- positionY to 7 by 1) {
+        for (y <- (positionY + 1) to 7 by 1) {
           val frontSquare = board(positionX)(y)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((positionX, y, false))
@@ -124,10 +122,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((positionX, y, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -135,7 +131,7 @@ object MoveSuggestion {
     /** back movement */
     if (positionX < 7 && piece.color == Color.White) {
       boundary {
-        for (x <- positionX to 7 by 1) {
+        for (x <- (positionX + 1) to 7 by 1) {
           val frontSquare = board(x)(positionY)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((x, positionY, false))
@@ -144,10 +140,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((x, positionY, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -155,7 +149,7 @@ object MoveSuggestion {
     /** left movement */
     if (positionY > 0 && piece.color == Color.White) {
       boundary {
-        for (y <- positionY to 7 by -1) {
+        for (y <- (positionY - 1) to 0 by -1) {
           val frontSquare = board(positionX)(y)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((positionX, y, false))
@@ -164,10 +158,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((positionX, y, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -178,7 +170,7 @@ object MoveSuggestion {
     /** front movement */
     if (positionX > 0 && piece.color == Color.Black) {
       boundary {
-        for (x <- positionX to 0 by -1) {
+        for (x <- (positionX - 1) to 0 by -1) {
           val frontSquare = board(x)(positionY)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((x, positionY, false))
@@ -187,10 +179,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((x, positionY, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -198,7 +188,7 @@ object MoveSuggestion {
     /** right movement */
     if (positionY < 7 && piece.color == Color.Black) {
       boundary {
-        for (y <- positionY to 7 by 1) {
+        for (y <- (positionY + 1) to 7 by 1) {
           val frontSquare = board(positionX)(y)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((positionX, y, false))
@@ -207,10 +197,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((positionX, y, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -218,7 +206,7 @@ object MoveSuggestion {
     /** back movement */
     if (positionX < 7 && piece.color == Color.Black) {
       boundary {
-        for (x <- positionX to 7 by 1) {
+        for (x <- (positionX + 1) to 7 by 1) {
           val frontSquare = board(x)(positionY)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((x, positionY, false))
@@ -227,10 +215,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((x, positionY, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
@@ -238,7 +224,7 @@ object MoveSuggestion {
     /** left movement */
     if (positionY > 0 && piece.color == Color.Black) {
       boundary {
-        for (y <- positionY to 7 by -1) {
+        for (y <- (positionY - 1) to 0 by -1) {
           val frontSquare = board(positionX)(y)
           if (frontSquare.color == Color.None) {
             suggestedMoves.addOne((positionX, y, false))
@@ -247,10 +233,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (frontSquare.color == piece.color) {
-            suggestedMoves.addOne((positionX, y, false))
+          if (frontSquare.color == piece.color)
             boundary.break()
-          }
         }
       }
     }
