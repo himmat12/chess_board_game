@@ -9,8 +9,8 @@ import scala.util.matching.Regex
 
 object GameApp {
   val game = new Game()
-  var selected: String = ""
-  var newPos: String = ""
+  private var selected: String = ""
+  private var newPos: String = ""
 
   def main(args: Array[String]): Unit = {
     game.initialiseGame()

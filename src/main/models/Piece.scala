@@ -18,10 +18,6 @@ class Piece(var initialX: Int, var initialY: Int, var value: String, var color: 
   }
 }
 
-//val king = new Piece(Color.Black, Rank.King, Array(MoveOption.StraightLine), 'e', 1)
-//val queen = new Piece(Color.Black, Rank.Queen, Array(MoveOption.StraightLine, MoveOption.Diagonal), 'd', 1)
-
-
 /**
  * Enums values for chess piece ranks
  * */
