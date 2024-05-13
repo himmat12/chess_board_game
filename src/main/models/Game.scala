@@ -42,10 +42,11 @@ class Game {
 
   // initialising the game
   def initialiseGame(): Unit = {
-    totalPieces = GameBuilder.initialiseDefaultSetup()
+    //    totalPieces = GameBuilder.initialiseDefaultSetup()
     //    totalPieces = GameBuilder.initialisePawnSetup()
     //    totalPieces = GameBuilder.initialiseRookSetup()
     //    totalPieces = GameBuilder.initialiseKnightSetup()
+    totalPieces = GameBuilder.initialiseBishopSetup()
 
     var row = 8
     for (x <- 0 until 8) {
@@ -180,11 +181,10 @@ class Game {
       suggestedMoves = suggestMoveKnight(piece, board)
     }
 
-    //
-    //    if (piece.rank == Rank.Bishop) {
-    //      suggestMoveBishop(piece.positionX, piece.positionY)
-    //    }
-    //
+    if (piece.rank == Rank.Bishop) {
+      suggestedMoves = suggestMoveBishop(piece, board)
+    }
+
     //    if (piece.rank == Rank.Queen) {
     //      suggestMoveQueen(piece.positionX, piece.positionY)
     //    }
@@ -236,10 +236,11 @@ class Game {
       markSuggestedMoves(piece, suggestedMoves)
     }
 
-    //    if (piece.rank == Rank.Bishop) {
-    //      suggestMoveBishop(piece.positionX, piece.positionY)
-    //    }
-    //
+    if (piece.rank == Rank.Bishop) {
+      val suggestedMoves = suggestMoveBishop(piece, board)
+      markSuggestedMoves(piece, suggestedMoves)
+    }
+
     //    if (piece.rank == Rank.Queen) {
     //      suggestMoveQueen(piece.positionX, piece.positionY)
     //    }

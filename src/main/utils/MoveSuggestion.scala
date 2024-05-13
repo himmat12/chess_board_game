@@ -403,7 +403,7 @@ object MoveSuggestion {
   }
 
   /**
-   * todo: suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
+   * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
    * */
   def suggestMoveBishop(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -415,6 +415,189 @@ object MoveSuggestion {
      * check on square in board in that given x , y coordinates
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    /** white piece diagonal move */
+    if (piece.color == Color.White) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            if (board(positionX - count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
+
+            if (board(positionX - count)(positionY - count).color == Color.Black)
+              suggestedMoves.addOne((positionX - count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY - count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            if (board(positionX - count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
+
+            if (board(positionX - count)(positionY + count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY + count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            if (board(positionX + count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
+
+            if (board(positionX + count)(positionY + count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY + count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            if (board(positionX + count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
+
+            if (board(positionX + count)(positionY - count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY - count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+    }
+
+    /** black piece diagonal move */
+    if (piece.color == Color.Black) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            if (board(positionX - count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
+
+            if (board(positionX - count)(positionY - count).color == Color.White)
+              suggestedMoves.addOne((positionX - count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY - count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            if (board(positionX - count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
+
+            if (board(positionX - count)(positionY + count).color == Color.White)
+              suggestedMoves.addOne((positionX - count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY + count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            if (board(positionX + count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
+
+            if (board(positionX + count)(positionY + count).color == Color.White)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY + count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            if (board(positionX + count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
+
+            if (board(positionX + count)(positionY - count).color == Color.White)
+              suggestedMoves.addOne((positionX + count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY - count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+    }
 
     suggestedMoves
   }
