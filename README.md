@@ -36,9 +36,9 @@ This project is a simple implementation of chess in Scala. It provides a basic c
 ## How to Play
 
 - **Game Setup**: The game starts with a standard chess board setup with pieces placed in their initial positions.
-- **Move Input**: To make a move, enter the starting position and the destination position of the piece you want to move. For example, "e2 e4" to move the pawn at e2 to e4.
+- **Move Input**: To make a move, enter the chess piece value and then destination position of the piece you want to move. For example, move "wp5" white pawn to "f3" from its initial position "f2".
 - **Game Progression**: The game alternates between players, allowing each player to make a move until checkmate or stalemate is reached.
-- **Check and Checkmate**: The game will notify players if a king is in check or if a checkmate has occurred.
+- **Check and Checkmate**: The game will notify players if a king is in check or if a checkmate has occurred (checkmate and stalemate are still in development).
 
 ## Contributing
 
@@ -51,6 +51,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgements
 
 - This project was inspired by the love for chess and the desire to learn Scala.
-- Special thanks to the Scala community for providing valuable resources and support.
+- Special thanks to the Scala community and Chess programming community for providing valuable resources and support.
 
 ---
