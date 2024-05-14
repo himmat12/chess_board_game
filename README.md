@@ -1,5 +1,7 @@
 # Scala Chess Board Game
 
+![01](https://github.com/himmat12/chess_board_game/assets/48753714/2d16cd58-12ae-4050-b03e-56f371deeb76)
+
 Welcome to my Scala-based chess board game project!
 
 This project is a simple implementation of chess in Scala. It provides a basic chess board, pieces, and rules to play the game.
@@ -55,7 +57,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ## Game screenshots
-![01](https://github.com/himmat12/chess_board_game/assets/48753714/2d16cd58-12ae-4050-b03e-56f371deeb76)
 ![02](https://github.com/himmat12/chess_board_game/assets/48753714/545c3d1c-13eb-4d9e-b513-c1b5e32259aa)
 ![03](https://github.com/himmat12/chess_board_game/assets/48753714/20ec6813-bd86-462b-a9ed-474e3311a01b)
 ![04](https://github.com/himmat12/chess_board_game/assets/48753714/7e0277c1-8ded-4e00-a9f4-9bbb355bdf53)
