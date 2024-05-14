@@ -25,7 +25,7 @@ This project is a simple implementation of chess in Scala. It provides a basic c
    ```
 2. **Build the Project**: Navigate to the project directory and use SBT to build the project.
    ```bash
-   cd scala-chess
+   cd chess_board_game
    sbt compile
    ```
 3. **Run the Game**: Once the project is compiled successfully, you can run the game.
