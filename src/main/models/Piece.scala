@@ -32,8 +32,3 @@ enum Color:
   case Black, White, None
 
 
-/**
- * Enums values for chess piece move options
- * */
-enum MoveOption:
-  case Diagonal, StraightLine, L

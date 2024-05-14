@@ -20,7 +20,7 @@ object InputValidator {
       false
   }
 
-  /** todo: function comment description and validation logic implementation */
+  /** takes in chess piece string value and matches with each piece value string from the total pieces available in the board at the moment */
   def isValidPieceStr(pieceStr: String, pieces: ArrayBuffer[Piece]): Boolean = {
     val filteredList = pieces.filter(e => e.value.toLowerCase == pieceStr.toLowerCase)
     if (filteredList.isEmpty)
