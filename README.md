@@ -1,5 +1,3 @@
-﻿Sure, here's a sample README.md file for your Scala-based chess board game:
-
 # Scala Chess Board Game
 
 Welcome to my Scala-based chess board game project!
