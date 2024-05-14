@@ -1,4 +1,4 @@
-# Scala Chess Board Game
+# Scala Chess Board Game (still in development)
 
 ![01](https://github.com/himmat12/chess_board_game/assets/48753714/2d16cd58-12ae-4050-b03e-56f371deeb76)
 
