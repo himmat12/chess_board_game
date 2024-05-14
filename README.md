@@ -21,7 +21,7 @@ This project is a simple implementation of chess in Scala. It provides a basic c
 
 1. **Clone the Repository**: Clone this repository to your local machine.
    ```bash
-   git clone https://github.com/your_username/scala-chess.git
+   https://github.com/himmat12/chess_board_game.git
    ```
 2. **Build the Project**: Navigate to the project directory and use SBT to build the project.
    ```bash
