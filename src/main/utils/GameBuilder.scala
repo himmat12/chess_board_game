@@ -145,11 +145,50 @@ object GameBuilder {
 
   def initialiseQueenSetup(): ArrayBuffer[Piece] = {
     val pieces = ArrayBuffer[Piece]()
+
+    /**
+     * setting the black pieces position in board
+     * */
+    pieces.addOne(new Piece(0, 4, "BQ4", Color.Black, Rank.Queen, 0, 4))
+    pieces.addOne(new Piece(0, 6, "BN6", Color.Black, Rank.Knight, 0, 6))
+    pieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
+    pieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
+    pieces.addOne(new Piece(1, 6, "BP6", Color.Black, Rank.Pawn, 5, 6))
+
+    /**
+     * setting the white pieces position in board
+     * */
+    pieces.addOne(new Piece(7, 4, "WQ4", Color.White, Rank.Queen, 4, 4))
+    pieces.addOne(new Piece(7, 6, "WN6", Color.White, Rank.Knight, 7, 6))
+    pieces.addOne(new Piece(7, 5, "WB5", Color.White, Rank.Bishop, 1, 2))
+    pieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 5, 2))
+    pieces.addOne(new Piece(6, 3, "WP3", Color.White, Rank.Pawn, 6, 3))
+    pieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
+
     pieces
   }
 
   def initialiseKingSetup(): ArrayBuffer[Piece] = {
     val pieces = ArrayBuffer[Piece]()
+
+    /**
+     * setting the black pieces position in board
+     * */
+    pieces.addOne(new Piece(0, 4, "BQ4", Color.Black, Rank.Queen, 0, 4))
+    pieces.addOne(new Piece(0, 3, "BK3", Color.Black, Rank.King, 0, 3))
+    pieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
+    pieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
+    pieces.addOne(new Piece(1, 6, "BP6", Color.Black, Rank.Pawn, 5, 6))
+
+    /**
+     * setting the white pieces position in board
+     * */
+    pieces.addOne(new Piece(7, 4, "WQ4", Color.White, Rank.Queen, 4, 4))
+    pieces.addOne(new Piece(7, 3, "WK3", Color.White, Rank.King, 0, 7))
+    pieces.addOne(new Piece(7, 5, "WB5", Color.White, Rank.Bishop, 1, 2))
+    pieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 5, 2))
+    pieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
+
     pieces
   }
 

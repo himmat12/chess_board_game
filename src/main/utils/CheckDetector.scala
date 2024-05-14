@@ -3,7 +3,11 @@ package main.utils
 import main.models.{Color, Piece, Rank}
 
 object CheckDetector {
+  private var isCheck = false
 
-  def isKingInCheck(piece: Piece, opponentPieces: Array[Piece]): Boolean = false
+  def setCheck(): Unit = {
+    isCheck = true
+  }
 
+  def isChecked: Boolean = isCheck
 }

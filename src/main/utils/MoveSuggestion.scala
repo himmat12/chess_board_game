@@ -603,24 +603,22 @@ object MoveSuggestion {
   }
 
   /**
-   * todo: suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
+   * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
    * */
   def suggestMoveQueen(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
-    val positionX = piece.positionX
-    val positionY = piece.positionY
-    val initialX = piece.initialX
-    val initialY = piece.initialY
+    val rookMoves = suggestMoveRook(piece, board)
+    val bishopMoves = suggestMoveBishop(piece, board)
 
     /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
      * check on square in board in that given x , y coordinates
      * */
-    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+    val suggestedMoves = (rookMoves ++ bishopMoves).distinct
 
     suggestedMoves
   }
 
   /**
-   * todo: suggestMoveKing() function suggests all legal moves for king in its current position in pieces
+   * suggestMoveKing() function suggests all legal moves for king in its current position in pieces
    * */
   def suggestMoveKing(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -633,6 +631,85 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
+    /** white piece movement */
+    if (piece.color == Color.White) {
+      /** front movement */
+      if (positionX > 0) {
+        if (board(positionX - 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
+
+        if (board(positionX - 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX - 1, positionY, true))
+      }
+
+      /** right movement */
+      if (positionY < 7) {
+        if (board(positionX)(positionY + 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
+
+        if (board(positionX)(positionY + 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY + 1, true))
+      }
+
+      /** back movement */
+      if (positionX < 7) {
+        if (board(positionX + 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
+
+        if (board(positionX + 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX + 1, positionY, true))
+      }
+
+      /** left movement */
+      if (positionY > 0) {
+        if (board(positionX)(positionY - 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
+
+        if (board(positionX)(positionY - 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY - 1, true))
+      }
+    }
+
+    /** black piece movement */
+    if (piece.color == Color.Black) {
+      /** front movement */
+      if (positionX > 0) {
+        if (board(positionX - 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
+
+        if (board(positionX - 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX - 1, positionY, true))
+      }
+
+      /** right movement */
+      if (positionY < 7) {
+        if (board(positionX)(positionY + 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
+
+        if (board(positionX)(positionY + 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY + 1, true))
+      }
+
+      /** back movement */
+      if (positionX < 7) {
+        if (board(positionX + 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
+
+        if (board(positionX + 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY, true))
+      }
+
+      /** left movement */
+      if (positionY > 0) {
+        if (board(positionX)(positionY - 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
+
+        if (board(positionX)(positionY - 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY - 1, true))
+      }
+    }
+
     suggestedMoves
   }
 }
+
