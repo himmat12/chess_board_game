@@ -16,8 +16,10 @@ This project is a simple implementation of chess in Scala. It provides a basic c
 
 ## Requirements
 
-- **Scala**: This project is built using Scala programming language.
-- **SBT (Scala Build Tool)**: SBT is used for building and managing dependencies.
+- **Scala 3.3.1 SDK**: This project is built using Scala programming language with Scala 3.3.1 SDK.
+- **IntelliJ**: The project was developed using IntelliJ IDE.
+- **JUnit 4**: JUnit 4 library is used for unit testing in this project.
+- **Getting started | Scala Doc**: https://docs.scala-lang.org/getting-started/index.html
 
 ## Getting Started
 
