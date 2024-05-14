@@ -54,5 +54,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Special thanks to the Scala community for providing valuable resources and support.
 
 ---
-
-Feel free to customize this README with more specific details about your project or any additional features you've implemented!
