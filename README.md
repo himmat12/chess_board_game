@@ -19,7 +19,6 @@ This project is a simple implementation of chess in Scala. It provides a basic c
 - **Scala 3.3.1 SDK**: This project is built using Scala programming language with Scala 3.3.1 SDK.
 - **IntelliJ**: The project was developed using IntelliJ IDE.
 - **JUnit 4**: JUnit 4 library is used for unit testing in this project.
-- **Getting started | Scala Doc**: https://docs.scala-lang.org/getting-started/index.html
 
 ## Getting Started
 
@@ -36,6 +35,8 @@ This project is a simple implementation of chess in Scala. It provides a basic c
    ```bash
    sbt run
    ```
+   ### Or, walkthrough this documentation to setup scala in intellij
+   [Getting Started | Scala Documentation](https://docs.scala-lang.org/getting-started/index.html)
 
 ## How to Play
 
