@@ -46,6 +46,9 @@ class Game {
     //    totalPieces = GameBuilder.initialisePawnSetup()
     //    totalPieces = GameBuilder.initialiseRookSetup()
     //    totalPieces = GameBuilder.initialiseKnightSetup()
+    //    totalPieces = GameBuilder.initialiseBishopSetup()
+    //    totalPieces = GameBuilder.initialiseQueenSetup()
+    //    totalPieces = GameBuilder.initialiseKingSetup()
 
     var row = 8
     for (x <- 0 until 8) {
@@ -95,6 +98,9 @@ class Game {
 
     /** printing the chess board with pieces on their setup positions */
     for (x <- 0 to 7) {
+      /** printing rows */
+      printRows(x)
+
       for (y <- 0 to 7) {
         if (board(x)(y).value != "" && (board(x)(y).positionX, board(x)(y).positionY) == (x, y)) {
           print(placeholder(board(x)(y).value))
@@ -109,9 +115,29 @@ class Game {
         }
       }
       println()
+
+      /** printing columns */
+      printColumns(x, " ", 39)
     }
     println()
   }
+
+  /** helper function for printing board columns */
+  private def printColumns(index: Int, space: String, lineCount: Int): Unit = {
+    /** printing columns */
+    if (index == 7) {
+      print("    ")
+      for (i <- 1 to lineCount) print("-")
+      println()
+      print("     ")
+      for (i <- 0 to 7)
+        print(placeholder(s" ${(97 + i).toChar}" + space))
+    }
+  }
+
+
+  /** helper function for printing board bottom rows */
+  private def printRows(index: Int): Unit = print(placeholder(s"${8 - index} |"))
 
   /** helper function which prints the current player turn */
   private def printPlayerTurn(): Unit = {
@@ -136,27 +162,24 @@ class Game {
 
     if (suggestedMoves.contains((x, y)) && board(x)(y) != board(lastPosX)(lastPosY)) {
 
-      // if there is any other opponent piece in new position then it will remove it (capture it)
-      //    println(board(x)(y).color)
-      //    println(board(x)(y).value)
-      if (board(x)(y).color != piece.color && board(x)(y).color != Color.None)
-        val opponentPieceIndex = totalPieces.indexWhere(e => e.value == board(x)(y).value)
-        totalPieces.remove(opponentPieceIndex)
+      /** if there is any other opponent piece in new position then it will remove it (capture it) */
+      if (board(x)(y).color != piece.color && board(x)(y).color != Color.None) {
+        if (board(x)(y).rank != Rank.King) {
+          val opponentPieceIndex = totalPieces.indexWhere(e => e.value == board(x)(y).value)
+          totalPieces.remove(opponentPieceIndex)
+        } else {
+          /** todo: invoke check detector here */
+        }
+      }
 
-      // updating piece current position to new destination (x, y) position
+      /** updating piece current position to new destination (x, y) position */
       piece.positionX = x
       piece.positionY = y
       board(x)(y) = piece
 
 
-      // resetting previous piece position in board to default piece value
+      /** resetting previous piece position in board to default piece value */
       board(lastPosX)(lastPosY) = defaultPiece(lastPosX, lastPosY)
-
-      //    println()
-      //    println(board(lastPosX)(lastPosY).initialX)
-      //    println(totalPieces.length)
-      //    totalPieces.foreach(e => print(e.value + " "))
-      //    println()
 
       PlayerTurn.toggle()
     } else {
@@ -168,30 +191,24 @@ class Game {
   /** helper function for moveTo() function which generates suggested moves for selected piece and returns the array of moves */
   private def suggestMoveAlt(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-    if (piece.rank == Rank.Pawn) {
+
+    if (piece.rank == Rank.Pawn)
       suggestedMoves = suggestMovePawn(piece, board)
-    }
 
-    if (piece.rank == Rank.Rook) {
+    if (piece.rank == Rank.Rook)
       suggestedMoves = suggestMoveRook(piece, board)
-    }
 
-    if (piece.rank == Rank.Knight) {
+    if (piece.rank == Rank.Knight)
       suggestedMoves = suggestMoveKnight(piece, board)
-    }
 
-    //
-    //    if (piece.rank == Rank.Bishop) {
-    //      suggestMoveBishop(piece.positionX, piece.positionY)
-    //    }
-    //
-    //    if (piece.rank == Rank.Queen) {
-    //      suggestMoveQueen(piece.positionX, piece.positionY)
-    //    }
-    //
-    //    if (piece.rank == Rank.King) {
-    //      suggestMoveKing(piece.positionX, piece.positionY)
-    //    }
+    if (piece.rank == Rank.Bishop)
+      suggestedMoves = suggestMoveBishop(piece, board)
+
+    if (piece.rank == Rank.Queen)
+      suggestedMoves = suggestMoveQueen(piece, board)
+
+    if (piece.rank == Rank.King)
+      suggestedMoves = suggestMoveKing(piece, board)
 
     suggestedMoves
   }
@@ -221,40 +238,29 @@ class Game {
   def suggestMove(piece: Piece): Unit = {
     printPlayerTurn()
 
-    if (piece.rank == Rank.Pawn) {
+    if (piece.rank == Rank.Pawn)
       val suggestedMoves = suggestMovePawn(piece, board)
       markSuggestedMoves(piece, suggestedMoves)
-    }
 
-    if (piece.rank == Rank.Rook) {
+    if (piece.rank == Rank.Rook)
       val suggestedMoves = suggestMoveRook(piece, board)
       markSuggestedMoves(piece, suggestedMoves)
-    }
 
-    if (piece.rank == Rank.Knight) {
+    if (piece.rank == Rank.Knight)
       val suggestedMoves = suggestMoveKnight(piece, board)
       markSuggestedMoves(piece, suggestedMoves)
-    }
 
-    //    if (piece.rank == Rank.Bishop) {
-    //      suggestMoveBishop(piece.positionX, piece.positionY)
-    //    }
-    //
-    //    if (piece.rank == Rank.Queen) {
-    //      suggestMoveQueen(piece.positionX, piece.positionY)
-    //    }
-    //
-    //    if (piece.rank == Rank.King) {
-    //      suggestMoveKing(piece.positionX, piece.positionY)
-    //    }
+    if (piece.rank == Rank.Bishop)
+      val suggestedMoves = suggestMoveBishop(piece, board)
+      markSuggestedMoves(piece, suggestedMoves)
 
-    //    println()
-    //    println(piece.value)
-    //    println(piece.color)
-    //    println(piece.rank)
-    //    println(piece.positionValue)
-    //    println(s"initial position: (${piece.initialX}, ${piece.initialY})")
-    //    println(s"current position: (${piece.positionX}, ${piece.positionY})")
+    if (piece.rank == Rank.Queen)
+      val suggestedMoves = suggestMoveQueen(piece, board)
+      markSuggestedMoves(piece, suggestedMoves)
+
+    if (piece.rank == Rank.King)
+      val suggestedMoves = suggestMoveKing(piece, board)
+      markSuggestedMoves(piece, suggestedMoves)
 
     PlayerTurn.resetSelectedPiece()
   }
@@ -270,6 +276,9 @@ class Game {
     /** printing the chess pieces mapped position board with suggested move squares */
     var isPiecePosMarked = false
     for (x <- 0 to 7) {
+
+      /** printing rows */
+      printRows(x)
       for (y <- 0 to 7) {
         var flag = false
         var count = 0
@@ -300,15 +309,18 @@ class Game {
         }
       }
       println()
+
+      /** printing columns */
+      printColumns(x, "  ", 47)
     }
     println()
   }
 
   /**
-   * capture(rank) removes the opponent chess piece from the pieces and moves the attacking chess piece to captured chess piece position
+   * checkCaptures(piece) function removes the opponent chess piece from the pieces and moves the attacking chess piece to captured chess piece position
    * except opponent's king for which it checks it
    * */
-  def capture(rank: Rank): Unit = {
+  def checkCaptures(piece: Piece): Unit = {
   }
 
   /**

@@ -12,6 +12,7 @@ object PlayerTurn {
 
   def get: Color = player
 
+  /** toggle() function toggles the player turn state from white to black and vice versa */
   def toggle(): Unit = {
     if (player == Color.White)
       player = Color.Black

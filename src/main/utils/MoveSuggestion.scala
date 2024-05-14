@@ -403,7 +403,7 @@ object MoveSuggestion {
   }
 
   /**
-   * todo: suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
+   * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
    * */
   def suggestMoveBishop(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -416,28 +416,209 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
+    /** white piece diagonal move */
+    if (piece.color == Color.White) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            if (board(positionX - count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
+
+            if (board(positionX - count)(positionY - count).color == Color.Black)
+              suggestedMoves.addOne((positionX - count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY - count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            if (board(positionX - count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
+
+            if (board(positionX - count)(positionY + count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY + count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            if (board(positionX + count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
+
+            if (board(positionX + count)(positionY + count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY + count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            if (board(positionX + count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
+
+            if (board(positionX + count)(positionY - count).color == Color.Black)
+              suggestedMoves.addOne((positionX + count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY - count).color == Color.White) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+    }
+
+    /** black piece diagonal move */
+    if (piece.color == Color.Black) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            if (board(positionX - count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
+
+            if (board(positionX - count)(positionY - count).color == Color.White)
+              suggestedMoves.addOne((positionX - count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY - count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            if (board(positionX - count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
+
+            if (board(positionX - count)(positionY + count).color == Color.White)
+              suggestedMoves.addOne((positionX - count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX - count)(positionY + count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            if (board(positionX + count)(positionY + count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
+
+            if (board(positionX + count)(positionY + count).color == Color.White)
+              suggestedMoves.addOne((positionX + count, positionY + count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY + count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            if (board(positionX + count)(positionY - count).color == Color.None)
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
+
+            if (board(positionX + count)(positionY - count).color == Color.White)
+              suggestedMoves.addOne((positionX + count, positionY - count, true))
+              boundary.break()
+
+            if (board(positionX + count)(positionY - count).color == Color.Black) {
+              boundary.break()
+            }
+            count += 1
+          } else {
+            boundary.break()
+          }
+        }
+      }
+    }
+
     suggestedMoves
   }
 
   /**
-   * todo: suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
+   * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
    * */
   def suggestMoveQueen(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
-    val positionX = piece.positionX
-    val positionY = piece.positionY
-    val initialX = piece.initialX
-    val initialY = piece.initialY
+    val rookMoves = suggestMoveRook(piece, board)
+    val bishopMoves = suggestMoveBishop(piece, board)
 
     /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
      * check on square in board in that given x , y coordinates
      * */
-    val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+    val suggestedMoves = (rookMoves ++ bishopMoves).distinct
 
     suggestedMoves
   }
 
   /**
-   * todo: suggestMoveKing() function suggests all legal moves for king in its current position in pieces
+   * suggestMoveKing() function suggests all legal moves for king in its current position in pieces
    * */
   def suggestMoveKing(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -450,6 +631,85 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
+    /** white piece movement */
+    if (piece.color == Color.White) {
+      /** front movement */
+      if (positionX > 0) {
+        if (board(positionX - 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
+
+        if (board(positionX - 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX - 1, positionY, true))
+      }
+
+      /** right movement */
+      if (positionY < 7) {
+        if (board(positionX)(positionY + 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
+
+        if (board(positionX)(positionY + 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY + 1, true))
+      }
+
+      /** back movement */
+      if (positionX < 7) {
+        if (board(positionX + 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
+
+        if (board(positionX + 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX + 1, positionY, true))
+      }
+
+      /** left movement */
+      if (positionY > 0) {
+        if (board(positionX)(positionY - 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
+
+        if (board(positionX)(positionY - 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY - 1, true))
+      }
+    }
+
+    /** black piece movement */
+    if (piece.color == Color.Black) {
+      /** front movement */
+      if (positionX > 0) {
+        if (board(positionX - 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
+
+        if (board(positionX - 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX - 1, positionY, true))
+      }
+
+      /** right movement */
+      if (positionY < 7) {
+        if (board(positionX)(positionY + 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
+
+        if (board(positionX)(positionY + 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY + 1, true))
+      }
+
+      /** back movement */
+      if (positionX < 7) {
+        if (board(positionX + 1)(positionY).color == Color.None)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
+
+        if (board(positionX + 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY, true))
+      }
+
+      /** left movement */
+      if (positionY > 0) {
+        if (board(positionX)(positionY - 1).color == Color.None)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
+
+        if (board(positionX)(positionY - 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY - 1, true))
+      }
+    }
+
     suggestedMoves
   }
 }
+
