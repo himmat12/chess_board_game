@@ -1,6 +1,6 @@
 # Scala Chess Board Game (still in development)
 
-![01](https://github.com/himmat12/chess_board_game/assets/48753714/2d16cd58-12ae-4050-b03e-56f371deeb76)
+![00](https://github.com/himmat12/chess_board_game/assets/48753714/61640f7c-8905-4b47-ada1-0558ec52a66f)
 
 Welcome to my Scala-based chess board game project!
 
@@ -60,9 +60,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ## Game screenshots
-![02](https://github.com/himmat12/chess_board_game/assets/48753714/545c3d1c-13eb-4d9e-b513-c1b5e32259aa)
-![03](https://github.com/himmat12/chess_board_game/assets/48753714/20ec6813-bd86-462b-a9ed-474e3311a01b)
-![04](https://github.com/himmat12/chess_board_game/assets/48753714/7e0277c1-8ded-4e00-a9f4-9bbb355bdf53)
-![05](https://github.com/himmat12/chess_board_game/assets/48753714/5c4d613b-dbe7-4694-9523-5db2f15dbaa5)
-![06](https://github.com/himmat12/chess_board_game/assets/48753714/51bf01f2-46c0-4e2c-98bc-9237e2a22b4d)
+![000](https://github.com/himmat12/chess_board_game/assets/48753714/19cc776f-3638-49c2-af77-8a6286e05844)
+![001](https://github.com/himmat12/chess_board_game/assets/48753714/491c9f3c-90a6-46c4-af9c-045e740886bf)
+![002](https://github.com/himmat12/chess_board_game/assets/48753714/13e5e2a3-2ff9-49aa-a95d-cef31e6e3970)
+![003](https://github.com/himmat12/chess_board_game/assets/48753714/29f1e314-69b4-429b-ae33-c6f92826895e)
+![004](https://github.com/himmat12/chess_board_game/assets/48753714/3ec1a779-ecaf-4031-9a42-1505c8650e60)
+![005](https://github.com/himmat12/chess_board_game/assets/48753714/4bb4d9e7-35ba-4797-9bca-b45868046162)
+
 ---
