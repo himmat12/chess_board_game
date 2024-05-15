@@ -1,6 +1,6 @@
 package test.models
 
-import main.models.{Color, Game, MoveOption, Piece, Rank}
+import main.models.{Color, Game, Piece, Rank}
 import main.utils.MoveSuggestion
 import org.junit.Test
 import org.junit.Assert.*

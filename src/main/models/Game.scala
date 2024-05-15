@@ -328,38 +328,5 @@ class Game {
    * */
   def check(): Unit = {}
 
-  /**
-   * printBoard() prints the layout of pieces the the pieces corresponding squares values,
-   * and places all the chess pieces to their current positions in the pieces
-   * */
-  def printBoard(rows: Int, cols: Int): Unit = {
-    //    println(line)
-    for (y <- 8 to 1 by -1) {
-      print(s" $y |")
-      for (x <- 'a' until ('a' + cols).toChar) {
-        if ((x + y - 'a') % 2 == 0) print(placeholder("■")) else print(placeholder("□"))
-      }
-      print("|   ")
-      print(s"$y |")
-      for (x <- 'a' until ('a' + cols).toChar) {
-        if ((x + y) % 2 == 0)
-          print(s"($x$y)")
-        else
-          print(placeholder(s"$x$y"))
-      }
-      println("|")
-    }
-    //    println(line)
-    print("    ")
-    for (c <- 'a' to 'h') {
-      print(placeholder(s"$c"))
-    }
-    print("        ")
-    for (c <- 'a' to 'h') {
-      print(placeholder(s"$c "))
-    }
-    println()
-  }
-
 }
 

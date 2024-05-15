@@ -1,6 +1,6 @@
 package main
 
-import main.models.{Game, Move, Piece, Rank}
+import main.models.{Game, Piece, Rank}
 import main.utils.InputValidator.*
 import main.utils.PlayerTurn
 

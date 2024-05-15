@@ -26,9 +26,9 @@ object GameBuilder {
     for (y <- 2 to 5 by 3)
       pieces.addOne(new Piece(0, y, "BB" + y, Color.Black, Rank.Bishop, 0, y))
 
-    pieces.addOne(new Piece(0, 4, "BQ4", Color.Black, Rank.Queen, 0, 4))
+    pieces.addOne(new Piece(0, 3, "BQ3", Color.Black, Rank.Queen, 0, 3))
 
-    pieces.addOne(new Piece(0, 3, "BK3", Color.Black, Rank.King, 0, 3))
+    pieces.addOne(new Piece(0, 4, "BK4", Color.Black, Rank.King, 0, 4))
 
     /**
      * setting the white pieces default position in board
@@ -45,9 +45,9 @@ object GameBuilder {
     for (y <- 2 to 5 by 3)
       pieces.addOne(new Piece(7, y, "WB" + y, Color.White, Rank.Bishop, 7, y))
 
-    pieces.addOne(new Piece(7, 4, "WQ4", Color.White, Rank.Queen, 7, 4))
+    pieces.addOne(new Piece(7, 3, "WQ3", Color.White, Rank.Queen, 7, 3))
 
-    pieces.addOne(new Piece(7, 3, "WK3", Color.White, Rank.King, 7, 3))
+    pieces.addOne(new Piece(7, 4, "WK4", Color.White, Rank.King, 7, 4))
 
     pieces
   }

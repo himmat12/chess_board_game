@@ -1,6 +1,5 @@
 package main.models
 
-import main.models.Move
 
 /**
  * @positionX is the X coordinate of piece position in board
