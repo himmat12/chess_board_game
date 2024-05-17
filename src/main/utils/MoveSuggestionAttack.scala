@@ -1,83 +1,49 @@
 package main.utils
 
+
 import main.models.{Color, Piece}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.boundary
 
-object MoveSuggestion {
-  /**
-   * suggestMovePawn() function suggests all legal moves for pawn in its current position in pieces
-   * */
+object MoveSuggestionAttack {
+  /** suggestMovePawn() function generates pawn attack range squares - useful for detecting legal moves for king and check */
   def suggestMovePawn(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
-    val initialX = piece.initialX
-    val initialY = piece.initialY
 
     /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
      * check on square in board in that given x , y coordinates
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
-    /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
-    if ((positionX, positionY) == (initialX, initialY)) {
-      if (piece.color == Color.White) {
-        var count = 1
-        while (board(positionX - count)(positionY).value == "" && count < 3) {
-          suggestedMoves.addOne((positionX - count, positionY, false))
-          count += 1
-        }
-      } else {
-        var count = 1
-        while (board(positionX + count)(positionY).value == "" && count < 3) {
-          suggestedMoves.addOne((positionX + count, positionY, false))
-          count += 1
-        }
-      }
-    }
-
-    /** froward move from piece current position when it is not anymore in its default position */
-    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White && positionX > 0) {
-      if (board(positionX - 1)(positionY).value == "")
-        suggestedMoves.addOne((positionX - 1, positionY, false))
-    }
-    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black && positionX < 7) {
-      if (board(positionX + 1)(positionY).value == "")
-        suggestedMoves.addOne((positionX + 1, positionY, false))
-    }
-
     /** white piece diagonal move */
     if (piece.color == Color.White) {
       /** diagonal left-up (top & left square position from selected piece) */
       if (positionX > 0 && positionY > 0)
-        if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
-          suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+        suggestedMoves.addOne((positionX - 1, positionY - 1, false))
 
       /** diagonal right-up right (top & right square position from selected piece) */
       if (positionX > 0 && positionY < 7)
-        if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
-          suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+        suggestedMoves.addOne((positionX - 1, positionY + 1, false))
     }
 
     /** black piece diagonal move */
     if (piece.color == Color.Black) {
       /** diagonal left-down (bottom & left square position from selected piece) */
       if (positionX < 7 && positionY < 7)
-        if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
-          suggestedMoves.addOne((positionX + 1, positionY + 1, true))
+        suggestedMoves.addOne((positionX + 1, positionY + 1, false))
 
       /** diagonal right-down (bottom & right square position from selected piece) */
       if (positionX < 7 && positionY > 0)
-        if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
-          suggestedMoves.addOne((positionX + 1, positionY - 1, true))
+        suggestedMoves.addOne((positionX + 1, positionY - 1, false))
     }
 
     suggestedMoves
   }
 
   /**
-   * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
+   * suggestMoveRook() function suggests all moves for rook in its current position in pieces
    * */
   def suggestMoveRook(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -104,7 +70,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.White)
+            suggestedMoves.addOne((x, positionY, false))
             boundary.break()
         }
       }
@@ -122,7 +89,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.White)
+            suggestedMoves.addOne((positionX, y, false))
             boundary.break()
         }
       }
@@ -140,7 +108,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.White)
+            suggestedMoves.addOne((x, positionY, false))
             boundary.break()
         }
       }
@@ -158,7 +127,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.White)
+            suggestedMoves.addOne((positionX, y, false))
             boundary.break()
         }
       }
@@ -179,7 +149,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.Black)
+            suggestedMoves.addOne((x, positionY, false))
             boundary.break()
         }
       }
@@ -197,7 +168,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.Black)
+            suggestedMoves.addOne((positionX, y, false))
             boundary.break()
         }
       }
@@ -215,7 +187,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((x, positionY, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.Black)
+            suggestedMoves.addOne((x, positionY, false))
             boundary.break()
         }
       }
@@ -233,7 +206,8 @@ object MoveSuggestion {
             suggestedMoves.addOne((positionX, y, true))
             boundary.break()
           }
-          if (nextSquare.color == piece.color)
+          if (nextSquare.color == Color.Black)
+            suggestedMoves.addOne((positionX, y, false))
             boundary.break()
         }
       }
@@ -243,7 +217,7 @@ object MoveSuggestion {
   }
 
   /**
-   * suggestMoveKnight() function suggests all legal moves for Knight in its current position in pieces
+   * suggestMoveKnight() function suggests all moves for Knight in its current position in pieces
    * */
   def suggestMoveKnight(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -267,12 +241,18 @@ object MoveSuggestion {
         if (board(positionX - 2)(positionY - 1).color == Color.Black)
           suggestedMoves.addOne((positionX - 2, positionY - 1, true))
 
+        if (board(positionX - 2)(positionY - 1).color == Color.White)
+          suggestedMoves.addOne((positionX - 2, positionY - 1, false))
+
         //    2 squares front 1 square right
         if (board(positionX - 2)(positionY + 1).color == Color.None)
           suggestedMoves.addOne((positionX - 2, positionY + 1, false))
 
         if (board(positionX - 2)(positionY + 1).color == Color.Black)
           suggestedMoves.addOne((positionX - 2, positionY + 1, true))
+
+        if (board(positionX - 2)(positionY + 1).color == Color.White)
+          suggestedMoves.addOne((positionX - 2, positionY + 1, false))
       }
 
       /** right movement */
@@ -284,12 +264,18 @@ object MoveSuggestion {
         if (board(positionX - 1)(positionY + 2).color == Color.Black)
           suggestedMoves.addOne((positionX - 1, positionY + 2, true))
 
+        if (board(positionX - 1)(positionY + 2).color == Color.White)
+          suggestedMoves.addOne((positionX - 1, positionY + 2, false))
+
         //    2 squares right 1 square down
         if (board(positionX + 1)(positionY + 2).color == Color.None)
           suggestedMoves.addOne((positionX + 1, positionY + 2, false))
 
         if (board(positionX + 1)(positionY + 2).color == Color.Black)
           suggestedMoves.addOne((positionX + 1, positionY + 2, true))
+
+        if (board(positionX + 1)(positionY + 2).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY + 2, false))
       }
 
       /** back movement */
@@ -301,12 +287,18 @@ object MoveSuggestion {
         if (board(positionX + 2)(positionY - 1).color == Color.Black)
           suggestedMoves.addOne((positionX + 2, positionY - 1, true))
 
+        if (board(positionX + 2)(positionY - 1).color == Color.White)
+          suggestedMoves.addOne((positionX + 2, positionY - 1, false))
+
         //    2 squares back 1 square right
         if (board(positionX + 2)(positionY + 1).color == Color.None)
           suggestedMoves.addOne((positionX + 2, positionY + 1, false))
 
         if (board(positionX + 2)(positionY + 1).color == Color.Black)
           suggestedMoves.addOne((positionX + 2, positionY + 1, true))
+
+        if (board(positionX + 2)(positionY + 1).color == Color.White)
+          suggestedMoves.addOne((positionX + 2, positionY + 1, false))
       }
 
       /** left movement */
@@ -318,12 +310,18 @@ object MoveSuggestion {
         if (board(positionX - 1)(positionY - 2).color == Color.Black)
           suggestedMoves.addOne((positionX - 1, positionY - 2, true))
 
+        if (board(positionX - 1)(positionY - 2).color == Color.White)
+          suggestedMoves.addOne((positionX - 1, positionY - 2, false))
+
         //    2 squares left 1 square down
         if (board(positionX + 1)(positionY - 2).color == Color.None)
           suggestedMoves.addOne((positionX + 1, positionY - 2, false))
 
         if (board(positionX + 1)(positionY - 2).color == Color.Black)
           suggestedMoves.addOne((positionX + 1, positionY - 2, true))
+
+        if (board(positionX + 1)(positionY - 2).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY - 2, false))
       }
     }
 
@@ -339,12 +337,18 @@ object MoveSuggestion {
         if (board(positionX - 2)(positionY - 1).color == Color.White)
           suggestedMoves.addOne((positionX - 2, positionY - 1, true))
 
+        if (board(positionX - 2)(positionY - 1).color == Color.Black)
+          suggestedMoves.addOne((positionX - 2, positionY - 1, false))
+
         //    2 squares front 1 square right
         if (board(positionX - 2)(positionY + 1).color == Color.None)
           suggestedMoves.addOne((positionX - 2, positionY + 1, false))
 
         if (board(positionX - 2)(positionY + 1).color == Color.White)
           suggestedMoves.addOne((positionX - 2, positionY + 1, true))
+
+        if (board(positionX - 2)(positionY + 1).color == Color.Black)
+          suggestedMoves.addOne((positionX - 2, positionY + 1, false))
       }
 
       /** right movement */
@@ -356,12 +360,18 @@ object MoveSuggestion {
         if (board(positionX - 1)(positionY + 2).color == Color.White)
           suggestedMoves.addOne((positionX - 1, positionY + 2, true))
 
+        if (board(positionX - 1)(positionY + 2).color == Color.Black)
+          suggestedMoves.addOne((positionX - 1, positionY + 2, false))
+
         //    2 squares right 1 square down
         if (board(positionX + 1)(positionY + 2).color == Color.None)
           suggestedMoves.addOne((positionX + 1, positionY + 2, false))
 
         if (board(positionX + 1)(positionY + 2).color == Color.White)
           suggestedMoves.addOne((positionX + 1, positionY + 2, true))
+
+        if (board(positionX + 1)(positionY + 2).color == Color.Black)
+          suggestedMoves.addOne((positionX + 1, positionY + 2, false))
       }
 
       /** back movement */
@@ -373,12 +383,18 @@ object MoveSuggestion {
         if (board(positionX + 2)(positionY - 1).color == Color.White)
           suggestedMoves.addOne((positionX + 2, positionY - 1, true))
 
+        if (board(positionX + 2)(positionY - 1).color == Color.Black)
+          suggestedMoves.addOne((positionX + 2, positionY - 1, false))
+
         //    2 squares back 1 square right
         if (board(positionX + 2)(positionY + 1).color == Color.None)
           suggestedMoves.addOne((positionX + 2, positionY + 1, false))
 
         if (board(positionX + 2)(positionY + 1).color == Color.White)
           suggestedMoves.addOne((positionX + 2, positionY + 1, true))
+
+        if (board(positionX + 2)(positionY + 1).color == Color.Black)
+          suggestedMoves.addOne((positionX + 2, positionY + 1, false))
       }
 
       /** left movement */
@@ -390,11 +406,17 @@ object MoveSuggestion {
         if (board(positionX - 1)(positionY - 2).color == Color.White)
           suggestedMoves.addOne((positionX - 1, positionY - 2, true))
 
+        if (board(positionX - 1)(positionY - 2).color == Color.Black)
+          suggestedMoves.addOne((positionX - 1, positionY - 2, false))
+
         //    2 squares left 1 square down
         if (board(positionX + 1)(positionY - 2).color == Color.None)
           suggestedMoves.addOne((positionX + 1, positionY - 2, false))
 
         if (board(positionX + 1)(positionY - 2).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY - 2, true))
+
+        if (board(positionX + 1)(positionY - 2).color == Color.Black)
           suggestedMoves.addOne((positionX + 1, positionY - 2, true))
       }
     }
@@ -403,7 +425,7 @@ object MoveSuggestion {
   }
 
   /**
-   * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
+   * suggestMoveBishop() function suggests all moves for bishop in its current position in pieces
    * */
   def suggestMoveBishop(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -431,6 +453,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX - count)(positionY - count).color == Color.White) {
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
               boundary.break()
             }
             count += 1
@@ -453,6 +476,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX - count)(positionY + count).color == Color.White) {
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
               boundary.break()
             }
             count += 1
@@ -475,6 +499,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX + count)(positionY + count).color == Color.White) {
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
               boundary.break()
             }
             count += 1
@@ -497,6 +522,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX + count)(positionY - count).color == Color.White) {
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
               boundary.break()
             }
             count += 1
@@ -523,6 +549,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX - count)(positionY - count).color == Color.Black) {
+              suggestedMoves.addOne((positionX - count, positionY - count, false))
               boundary.break()
             }
             count += 1
@@ -545,6 +572,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX - count)(positionY + count).color == Color.Black) {
+              suggestedMoves.addOne((positionX - count, positionY + count, false))
               boundary.break()
             }
             count += 1
@@ -567,6 +595,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX + count)(positionY + count).color == Color.Black) {
+              suggestedMoves.addOne((positionX + count, positionY + count, false))
               boundary.break()
             }
             count += 1
@@ -589,6 +618,7 @@ object MoveSuggestion {
               boundary.break()
 
             if (board(positionX + count)(positionY - count).color == Color.Black) {
+              suggestedMoves.addOne((positionX + count, positionY - count, false))
               boundary.break()
             }
             count += 1
@@ -603,7 +633,7 @@ object MoveSuggestion {
   }
 
   /**
-   * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
+   * suggestMoveQueen() function suggests all moves for queen in its current position in pieces
    * */
   def suggestMoveQueen(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val rookMoves = suggestMoveRook(piece, board)
@@ -618,7 +648,7 @@ object MoveSuggestion {
   }
 
   /**
-   * suggestMoveKing() function suggests all legal moves for king in its current position in pieces
+   * suggestMoveKing() function suggests all moves for king in its current position in pieces
    * */
   def suggestMoveKing(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
@@ -641,6 +671,10 @@ object MoveSuggestion {
 
         if (board(positionX - 1)(positionY).color == Color.Black)
           suggestedMoves.addOne((positionX - 1, positionY, true))
+
+        if (board(positionX - 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
+
       }
 
       /** right movement */
@@ -650,6 +684,9 @@ object MoveSuggestion {
 
         if (board(positionX)(positionY + 1).color == Color.Black)
           suggestedMoves.addOne((positionX, positionY + 1, true))
+
+        if (board(positionX)(positionY + 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
       }
 
       /** back movement */
@@ -659,6 +696,10 @@ object MoveSuggestion {
 
         if (board(positionX + 1)(positionY).color == Color.Black)
           suggestedMoves.addOne((positionX + 1, positionY, true))
+
+        if (board(positionX + 1)(positionY).color == Color.White)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
+
       }
 
       /** left movement */
@@ -668,6 +709,9 @@ object MoveSuggestion {
 
         if (board(positionX)(positionY - 1).color == Color.Black)
           suggestedMoves.addOne((positionX, positionY - 1, true))
+
+        if (board(positionX)(positionY - 1).color == Color.White)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
       }
     }
 
@@ -680,6 +724,9 @@ object MoveSuggestion {
 
         if (board(positionX - 1)(positionY).color == Color.White)
           suggestedMoves.addOne((positionX - 1, positionY, true))
+
+        if (board(positionX - 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX - 1, positionY, false))
       }
 
       /** right movement */
@@ -689,6 +736,9 @@ object MoveSuggestion {
 
         if (board(positionX)(positionY + 1).color == Color.White)
           suggestedMoves.addOne((positionX, positionY + 1, true))
+
+        if (board(positionX)(positionY + 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY + 1, false))
       }
 
       /** back movement */
@@ -698,6 +748,9 @@ object MoveSuggestion {
 
         if (board(positionX + 1)(positionY).color == Color.White)
           suggestedMoves.addOne((positionX + 1, positionY, true))
+
+        if (board(positionX + 1)(positionY).color == Color.Black)
+          suggestedMoves.addOne((positionX + 1, positionY, false))
       }
 
       /** left movement */
@@ -707,6 +760,9 @@ object MoveSuggestion {
 
         if (board(positionX)(positionY - 1).color == Color.White)
           suggestedMoves.addOne((positionX, positionY - 1, true))
+
+        if (board(positionX)(positionY - 1).color == Color.Black)
+          suggestedMoves.addOne((positionX, positionY - 1, false))
       }
     }
 
@@ -716,4 +772,3 @@ object MoveSuggestion {
   }
 
 }
-

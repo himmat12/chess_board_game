@@ -2,16 +2,13 @@ package main.models
 
 import main.models.Piece
 import main.utils.MoveSuggestion.*
-import main.utils.{GameBuilder, PlayerTurn}
+import main.utils.{ GameBuilder, MoveSuggestion, MoveSuggestionAttack, PlayerTurn}
 
 import scala.collection.mutable.ArrayBuffer
 
 class Game {
 
-  // default string line for printing
-  private val line: String = "   +------------------------+   +----------------------------------+";
-
-  // placeholder for pieces square values
+  /** placeholder for pieces square values */
   private def placeholder(value: String): String = f"$value  "
 
   /**
@@ -42,13 +39,13 @@ class Game {
 
   // initialising the game
   def initialiseGame(): Unit = {
-    totalPieces = GameBuilder.initialiseDefaultSetup()
+    //    totalPieces = GameBuilder.initialiseDefaultSetup()
     //    totalPieces = GameBuilder.initialisePawnSetup()
     //    totalPieces = GameBuilder.initialiseRookSetup()
     //    totalPieces = GameBuilder.initialiseKnightSetup()
     //    totalPieces = GameBuilder.initialiseBishopSetup()
     //    totalPieces = GameBuilder.initialiseQueenSetup()
-    //    totalPieces = GameBuilder.initialiseKingSetup()
+    totalPieces = GameBuilder.initialiseKingSetup()
 
     var row = 8
     for (x <- 0 until 8) {
@@ -208,7 +205,7 @@ class Game {
       suggestedMoves = suggestMoveQueen(piece, board)
 
     if (piece.rank == Rank.King)
-      suggestedMoves = suggestMoveKing(piece, board)
+      suggestedMoves = getLegalMoves(piece)
 
     suggestedMoves
   }
@@ -259,7 +256,7 @@ class Game {
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.King)
-      val suggestedMoves = suggestMoveKing(piece, board)
+      val suggestedMoves = getLegalMoves(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     PlayerTurn.resetSelectedPiece()
@@ -324,9 +321,90 @@ class Game {
   }
 
   /**
-   * check() function checks the opponent chess piece King when it is in attack range
+   * checkDetector implementation
    * */
-  def check(): Unit = {}
+  private var checkedPieceColor = Color.None
+
+  /**
+   * takes in king piece and matches king's position (x,y) with each opponent pieces possible moves and
+   * if king's position matches with any of the pieces moves then it will flag isCheck to true and
+   * assign the checkedPieceColor value to pieces (king) color
+   * */
+  private def isChecked(piece: Piece): Boolean = {
+    val opponentsMoves = getOpponentMoves(piece)
+
+    false
+  }
+
+  /**
+   * this function checks all the legal move options for king and determines weather it is checkmate or not
+   * depending on the king piece have any moves left after check, if it does then it returns false else true i.e, checkmate
+   * */
+  private def isCheckmate(piece: Piece): Boolean = {
+    false
+  }
+
+  /** helper function which generates attack moves for selected piece and returns the array of moves */
+  private def genAttkRangeMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    if (piece.rank == Rank.Pawn)
+      suggestedMoves = MoveSuggestionAttack.suggestMovePawn(piece, board)
+
+    if (piece.rank == Rank.Rook)
+      suggestedMoves = MoveSuggestionAttack.suggestMoveRook(piece, board)
+
+    if (piece.rank == Rank.Knight)
+      suggestedMoves = MoveSuggestionAttack.suggestMoveKnight(piece, board)
+
+    if (piece.rank == Rank.Bishop)
+      suggestedMoves = MoveSuggestionAttack.suggestMoveBishop(piece, board)
+
+    if (piece.rank == Rank.Queen)
+      suggestedMoves = MoveSuggestionAttack.suggestMoveQueen(piece, board)
+
+    if (piece.rank == Rank.King)
+      suggestedMoves = MoveSuggestionAttack.suggestMoveKing(piece, board)
+
+    suggestedMoves
+  }
+
+  /** this functions returns all opponents pieces moves */
+  private def getOpponentMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    val opponentPieces = getTotalPieces.filter(e => e.color != piece.color)
+    val opponentsMoves = ArrayBuffer[ArrayBuffer[(Int, Int, Boolean)]]()
+    opponentPieces.foreach(e => opponentsMoves.addOne(genAttkRangeMoves(e)))
+
+    val onlyMoves = ArrayBuffer[(Int, Int, Boolean)]()
+    opponentsMoves.foreach(e => e.foreach(x => onlyMoves.addOne(x)))
+
+    onlyMoves
+  }
+
+  /** isLegalMove returns true if the next move for king is legal i.e, the next square is under opponent piece move range else false */
+  private def getLegalMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    val opponentsMoves = getOpponentMoves(piece).distinct
+    val suggestedMoves = MoveSuggestion.suggestMoveKing(piece, board)
+
+    /** opponentMoveCordnts and suggestedMoveCordnts only stores x and y coordinates values in the Array */
+    val opponentMoveCordnts = opponentsMoves.map(e => (e._1, e._2))
+    val suggestedMoveCordnts = suggestedMoves.map(e => (e._1, e._2))
+
+    /** difference between suggested moves and opponents attack moves */
+    val difference = (suggestedMoveCordnts.toSet -- opponentMoveCordnts.toSet).toArray
+
+    /** legal moves stores final filtered legal moves for king */
+    val legalMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    /**
+     * here we are filtering suggestedMoves elements by comparing each element e._1 and e._2 which are x and y value respectively
+     * with difference array list which stores filtered legal moves for king
+     * */
+    suggestedMoves.foreach(e => difference.foreach(x => if ((e._1, e._2) == x) legalMoves.addOne(e)))
+
+    legalMoves
+  }
+
 
 }
 
