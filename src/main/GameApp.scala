@@ -2,7 +2,7 @@ package main
 
 import main.models.{Game, Piece, Rank}
 import main.utils.InputValidator.*
-import main.utils.PlayerTurn
+import main.utils.{ PlayerTurn}
 
 import scala.io.StdIn.*
 import scala.util.matching.Regex
