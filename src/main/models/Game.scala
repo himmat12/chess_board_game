@@ -1,10 +1,11 @@
 package main.models
 
 import main.models.Piece
-import main.utils.MoveSuggestion.*
-import main.utils.{ GameBuilder, MoveSuggestion, MoveSuggestionAttack, PlayerTurn}
+import main.utils.Board.*
+import main.utils.{CheckDetector, GameBuilder, MoveSuggestion, MoveSuggestionAttack, PlayerTurn}
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.boundary
 
 class Game {
 
@@ -15,21 +16,6 @@ class Game {
    * withBrackets(value) takes string value and wraps it  inside bracket
    * */
   private def withBrackets(value: String): String = s"($value)"
-
-  /**
-   * board array stores the calculated value ('char' + Int) of each mapped squares position in the pieces
-   * */
-  var board: Array[Array[Piece]] = Array.ofDim[Piece](8, 8)
-
-  /**
-   * boardMap for moving pieces to squares in the board which stores the array of tuple which maps "a8" to its corresponding (x,y) coordinate like ("a8", 0, 0)
-   * */
-  private var boardMap: Array[Array[String]] = Array.ofDim[String](8, 8)
-
-  // collection of total chess pieces in board
-  private var totalPieces = ArrayBuffer[Piece]()
-
-  def getTotalPieces: ArrayBuffer[Piece] = totalPieces
 
   /** this function sets default space in board by initialising dummy Piece object */
   private def defaultPiece(posX: Int, posY: Int): Piece = {
@@ -147,7 +133,7 @@ class Game {
    * captures any opponent pieces if its in its destination position
    * */
   def moveTo(pos: String, piece: Piece): Unit = {
-    val suggestedMoves = suggestMoveAlt(piece).map(e => (e._1, e._2))
+    val suggestedMoves = MoveSuggestion.getPiecesLegalMoves(piece).map(e => (e._1, e._2))
 
     val posCoordinate = decryptFromPoseString(pos)
     val x = posCoordinate._1
@@ -185,32 +171,6 @@ class Game {
     }
   }
 
-  /** helper function for moveTo() function which generates suggested moves for selected piece and returns the array of moves */
-  private def suggestMoveAlt(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
-    var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-
-    if (piece.rank == Rank.Pawn)
-      suggestedMoves = suggestMovePawn(piece, board)
-
-    if (piece.rank == Rank.Rook)
-      suggestedMoves = suggestMoveRook(piece, board)
-
-    if (piece.rank == Rank.Knight)
-      suggestedMoves = suggestMoveKnight(piece, board)
-
-    if (piece.rank == Rank.Bishop)
-      suggestedMoves = suggestMoveBishop(piece, board)
-
-    if (piece.rank == Rank.Queen)
-      suggestedMoves = suggestMoveQueen(piece, board)
-
-    if (piece.rank == Rank.King)
-      suggestedMoves = getLegalMoves(piece)
-
-    suggestedMoves
-  }
-
-
   /** decrypts (converts) the board position string value "a8" and so on to (x,y) tuple (Int, Int) */
   private def decryptFromPoseString(pos: String): (Int, Int) = {
     val x = 8 - s"${pos.reverse.head}".toInt
@@ -229,40 +189,40 @@ class Game {
   private def checkPawnPromotion(): Unit = {}
 
   /**
-   * suggests all available moves options of selected chess piece
+   * suggests all available legal move options of selected chess piece
    * suggested moves are returned in an Array
    */
-  def suggestMove(piece: Piece): Unit = {
+  def generateMove(piece: Piece): Unit = {
     printPlayerTurn()
 
     if (piece.rank == Rank.Pawn)
-      val suggestedMoves = suggestMovePawn(piece, board)
+      val suggestedMoves = MoveSuggestion.suggestMovePawn(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.Rook)
-      val suggestedMoves = suggestMoveRook(piece, board)
+      val suggestedMoves = MoveSuggestion.suggestMoveRook(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.Knight)
-      val suggestedMoves = suggestMoveKnight(piece, board)
+      val suggestedMoves = MoveSuggestion.suggestMoveKnight(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.Bishop)
-      val suggestedMoves = suggestMoveBishop(piece, board)
+      val suggestedMoves = MoveSuggestion.suggestMoveBishop(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.Queen)
-      val suggestedMoves = suggestMoveQueen(piece, board)
+      val suggestedMoves = MoveSuggestion.suggestMoveQueen(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     if (piece.rank == Rank.King)
-      val suggestedMoves = getLegalMoves(piece)
+      val suggestedMoves = CheckDetector.getKingLegalMoves(piece)
       markSuggestedMoves(piece, suggestedMoves)
 
     PlayerTurn.resetSelectedPiece()
   }
 
-  /** markSuggestedMoves() is a helper function for suggestMove() function, which marks the suggested moves squares in board
+  /** markSuggestedMoves() is a helper function for generateMove() function, which marks the suggested moves squares in board
    *
    * "(P)":  all available squares
    * "[P]":  selected piece square
@@ -312,99 +272,6 @@ class Game {
     }
     println()
   }
-
-  /**
-   * checkCaptures(piece) function removes the opponent chess piece from the pieces and moves the attacking chess piece to captured chess piece position
-   * except opponent's king for which it checks it
-   * */
-  def checkCaptures(piece: Piece): Unit = {
-  }
-
-  /**
-   * checkDetector implementation
-   * */
-  private var checkedPieceColor = Color.None
-
-  /**
-   * takes in king piece and matches king's position (x,y) with each opponent pieces possible moves and
-   * if king's position matches with any of the pieces moves then it will flag isCheck to true and
-   * assign the checkedPieceColor value to pieces (king) color
-   * */
-  private def isChecked(piece: Piece): Boolean = {
-    val opponentsMoves = getOpponentMoves(piece)
-
-    false
-  }
-
-  /**
-   * this function checks all the legal move options for king and determines weather it is checkmate or not
-   * depending on the king piece have any moves left after check, if it does then it returns false else true i.e, checkmate
-   * */
-  private def isCheckmate(piece: Piece): Boolean = {
-    false
-  }
-
-  /** helper function which generates attack moves for selected piece and returns the array of moves */
-  private def genAttkRangeMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
-    var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-
-    if (piece.rank == Rank.Pawn)
-      suggestedMoves = MoveSuggestionAttack.suggestMovePawn(piece, board)
-
-    if (piece.rank == Rank.Rook)
-      suggestedMoves = MoveSuggestionAttack.suggestMoveRook(piece, board)
-
-    if (piece.rank == Rank.Knight)
-      suggestedMoves = MoveSuggestionAttack.suggestMoveKnight(piece, board)
-
-    if (piece.rank == Rank.Bishop)
-      suggestedMoves = MoveSuggestionAttack.suggestMoveBishop(piece, board)
-
-    if (piece.rank == Rank.Queen)
-      suggestedMoves = MoveSuggestionAttack.suggestMoveQueen(piece, board)
-
-    if (piece.rank == Rank.King)
-      suggestedMoves = MoveSuggestionAttack.suggestMoveKing(piece, board)
-
-    suggestedMoves
-  }
-
-  /** this functions returns all opponents pieces moves */
-  private def getOpponentMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
-    val opponentPieces = getTotalPieces.filter(e => e.color != piece.color)
-    val opponentsMoves = ArrayBuffer[ArrayBuffer[(Int, Int, Boolean)]]()
-    opponentPieces.foreach(e => opponentsMoves.addOne(genAttkRangeMoves(e)))
-
-    val onlyMoves = ArrayBuffer[(Int, Int, Boolean)]()
-    opponentsMoves.foreach(e => e.foreach(x => onlyMoves.addOne(x)))
-
-    onlyMoves
-  }
-
-  /** isLegalMove returns true if the next move for king is legal i.e, the next square is under opponent piece move range else false */
-  private def getLegalMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
-    val opponentsMoves = getOpponentMoves(piece).distinct
-    val suggestedMoves = MoveSuggestion.suggestMoveKing(piece, board)
-
-    /** opponentMoveCordnts and suggestedMoveCordnts only stores x and y coordinates values in the Array */
-    val opponentMoveCordnts = opponentsMoves.map(e => (e._1, e._2))
-    val suggestedMoveCordnts = suggestedMoves.map(e => (e._1, e._2))
-
-    /** difference between suggested moves and opponents attack moves */
-    val difference = (suggestedMoveCordnts.toSet -- opponentMoveCordnts.toSet).toArray
-
-    /** legal moves stores final filtered legal moves for king */
-    val legalMoves = ArrayBuffer[(Int, Int, Boolean)]()
-
-    /**
-     * here we are filtering suggestedMoves elements by comparing each element e._1 and e._2 which are x and y value respectively
-     * with difference array list which stores filtered legal moves for king
-     * */
-    suggestedMoves.foreach(e => difference.foreach(x => if ((e._1, e._2) == x) legalMoves.addOne(e)))
-
-    legalMoves
-  }
-
 
 }
 

@@ -74,6 +74,7 @@ object GameBuilder {
      * setting the black pieces position in board
      * */
     pieces.addOne(new Piece(1, 3, "BP3", Color.Black, Rank.Pawn, 1, 3))
+    pieces.addOne(new Piece(1, 4, "BP4", Color.Black, Rank.Pawn, 5, 4))
     pieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 2, 5))
     pieces.addOne(new Piece(1, 7, "BP7", Color.Black, Rank.Pawn, 5, 7))
     pieces.addOne(new Piece(1, 6, "BP6", Color.Black, Rank.Pawn, 5, 6))
@@ -81,8 +82,9 @@ object GameBuilder {
     /**
      * setting the white pieces position in board
      * */
-    pieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 2, 2))
     pieces.addOne(new Piece(6, 1, "WP1", Color.White, Rank.Pawn, 1, 2))
+    pieces.addOne(new Piece(6, 2, "WP2", Color.White, Rank.Pawn, 2, 2))
+    pieces.addOne(new Piece(6, 3, "WP3", Color.White, Rank.Pawn, 6, 3))
     pieces.addOne(new Piece(6, 6, "WP6", Color.White, Rank.Pawn, 6, 6))
   }
 
@@ -193,6 +195,7 @@ object GameBuilder {
     pieces.addOne(new Piece(1, 2, "BP2", Color.Black, Rank.Pawn, 4, 2))
     pieces.addOne(new Piece(1, 4, "BP4", Color.Black, Rank.Pawn, 4, 4))
     pieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 3, 5))
+    pieces.addOne(new Piece(0, 0, "BR0", Color.Black, Rank.Rook, 5, 0))
 
     /**
      * setting the white pieces position in board
@@ -201,6 +204,7 @@ object GameBuilder {
     pieces.addOne(new Piece(7, 3, "WK3", Color.White, Rank.King, 5, 4))
     pieces.addOne(new Piece(7, 2, "WB2", Color.White, Rank.Bishop, 2, 0))
     pieces.addOne(new Piece(6, 1, "WP1", Color.White, Rank.Pawn, 1, 1))
+    pieces.addOne(new Piece(6, 1, "WN1", Color.White, Rank.Knight, 5, 2))
 
     pieces
   }
