@@ -1,14 +1,15 @@
 package main.utils
 
 
-import main.models.{Color, Piece}
+import main.models.{Color, Piece, Rank}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.boundary
+import main.utils.Board.*
 
 object MoveSuggestionAttack {
   /** suggestMovePawn() function generates pawn attack range squares - useful for detecting legal moves for king and check */
-  def suggestMovePawn(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+  def suggestMovePawn(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
 
@@ -45,7 +46,7 @@ object MoveSuggestionAttack {
   /**
    * suggestMoveRook() function suggests all moves for rook in its current position in pieces
    * */
-  def suggestMoveRook(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+  def suggestMoveRook(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -219,7 +220,7 @@ object MoveSuggestionAttack {
   /**
    * suggestMoveKnight() function suggests all moves for Knight in its current position in pieces
    * */
-  def suggestMoveKnight(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+  def suggestMoveKnight(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -427,7 +428,7 @@ object MoveSuggestionAttack {
   /**
    * suggestMoveBishop() function suggests all moves for bishop in its current position in pieces
    * */
-  def suggestMoveBishop(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+  def suggestMoveBishop(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -635,9 +636,9 @@ object MoveSuggestionAttack {
   /**
    * suggestMoveQueen() function suggests all moves for queen in its current position in pieces
    * */
-  def suggestMoveQueen(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
-    val rookMoves = suggestMoveRook(piece, board)
-    val bishopMoves = suggestMoveBishop(piece, board)
+  def suggestMoveQueen(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    val rookMoves = suggestMoveRook(piece)
+    val bishopMoves = suggestMoveBishop(piece)
 
     /** the first and second Int element are (x, y) coordinates in 2D array respectively and the last boolean element is for opponent piece
      * check on square in board in that given x , y coordinates
@@ -650,7 +651,7 @@ object MoveSuggestionAttack {
   /**
    * suggestMoveKing() function suggests all moves for king in its current position in pieces
    * */
-  def suggestMoveKing(piece: Piece, board: Array[Array[Piece]]): ArrayBuffer[(Int, Int, Boolean)] = {
+  def suggestMoveKing(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -766,9 +767,32 @@ object MoveSuggestionAttack {
       }
     }
 
+    suggestedMoves
+  }
+
+  /** generates attack moves for selected piece and returns the array of moves */
+  def genAttkRangeMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
+
+    if (piece.rank == Rank.Pawn)
+      suggestedMoves = suggestMovePawn(piece)
+
+    if (piece.rank == Rank.Rook)
+      suggestedMoves = suggestMoveRook(piece)
+
+    if (piece.rank == Rank.Knight)
+      suggestedMoves = suggestMoveKnight(piece)
+
+    if (piece.rank == Rank.Bishop)
+      suggestedMoves = suggestMoveBishop(piece)
+
+    if (piece.rank == Rank.Queen)
+      suggestedMoves = suggestMoveQueen(piece)
+
+    if (piece.rank == Rank.King)
+      suggestedMoves = suggestMoveKing(piece)
 
     suggestedMoves
-
   }
 
 }
