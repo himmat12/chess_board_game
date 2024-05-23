@@ -1,7 +1,7 @@
 package main.utils
 
-import main.models.{Color, Game, Piece, Rank}
-
+import main.enums.*
+import main.models.{Game, Piece}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.boundary
 import main.utils.{MoveSuggestion, MoveSuggestionAttack}
@@ -10,33 +10,43 @@ import main.utils.Board.*
 /** CheckDetector implementation */
 object CheckDetector {
   /** default piece - empty space in board squares */
-  private val defaultPiece = new Piece(-1, -1, "", Color.None, Rank.None, -1, -1)
+  val defaultPiece = new Piece(-1, -1, "", Color.None, Rank.None, -1, -1)
 
-  /** checkedKing stores checked king piece value */
-  private var checkedKing = defaultPiece
+  /** opponent piece attacking king */
+  private var opponentPiece = defaultPiece
+
+  def getOpponentPiece = opponentPiece
+
+  def setOpponentPiece(piece: Piece): Unit = {
+    opponentPiece = piece
+  }
 
   /**
    * takes in king as piece parma and matches king's position (x,y) with each opponent pieces possible next moves and
    * if king's position matches with any of the pieces moves then it will flag isCheck to true and
    * assign the checkedKing value to pieces (king) color
    * */
-  private def isChecked(king: Piece): Boolean = {
-    val opponentsMoves = getOpponentMoves(king)
-    var isChecked = false
-    opponentsMoves.foreach(e => boundary {
-      if ((e._1, e._2) == (king.positionX, king.positionY))
-        isChecked = true
-        checkedKing = king
-        boundary.break()
-    })
-    isChecked
+  def isChecked(king: Piece): Boolean = {
+    val opponentsMoves = getOpponentAttkMoves(king)
+    //    var isChecked = false
+    if (opponentsMoves.map(e => (e._1, e._2)).contains((king.positionX, king.positionY)))
+      true
+    else
+      false
+    //    opponentsMoves.foreach(e => boundary {
+    //      if ((e._1, e._2) == (king.positionX, king.positionY))
+    //        isChecked = true
+    //        checkedKing = king
+    //        boundary.break()
+    //    })
+    //    isChecked
   }
 
   /**
    * this function checks all the legal move options for king and determines weather it is checkmate or not
    * depending on the king piece have any moves left after check, if it does then it returns false else true i.e, checkmate
    * */
-  private def isCheckmate(king: Piece): Boolean = {
+  def isCheckmate(king: Piece): Boolean = {
     val kingLegalMoves = getKingLegalMoves(king)
     val boardWithoutKing = totalPieces.filter(e => e != king)
     val moves = boardWithoutKing.map(e => MoveSuggestion.getPiecesLegalMoves(king))
@@ -46,19 +56,6 @@ object CheckDetector {
       true
     else
       false
-  }
-
-  /**
-   * this functions returns all opponents pieces attack range moves in a single array (ArrayBuffer[(Int, Int, Boolean)])
-   * */
-  private def getOpponentAttkMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
-    val opponentPieces = totalPieces.filter(e => e.color != piece.color)
-    val opponentsMoves = ArrayBuffer[ArrayBuffer[(Int, Int, Boolean)]]()
-    opponentPieces.foreach(e => opponentsMoves.addOne(MoveSuggestionAttack.genAttkRangeMoves(e)))
-
-    val onlyMoves = opponentsMoves.flatten
-
-    onlyMoves
   }
 
   /**
@@ -74,26 +71,60 @@ object CheckDetector {
     onlyMoves
   }
 
+  /**
+   * this functions returns all opponents pieces attack range moves in a single array (ArrayBuffer[(Int, Int, Boolean)])
+   * */
+  private def getOpponentAttkMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+    val opponentPieces = totalPieces.filter(e => e.color != piece.color)
+    val opponentsMoves = ArrayBuffer[ArrayBuffer[(Int, Int, Boolean)]]()
+    opponentPieces.foreach(e => opponentsMoves.addOne(MoveSuggestionAttack.genAttkRangeMoves(e)))
+
+    val onlyMoves = opponentsMoves.flatten
+
+    onlyMoves
+  }
+
+  /** this function returns array of opponents pieces positions except opponent king */
+  def getOppntPiecesPos(piece: Piece): Array[(Int, Int)] = {
+    val opponentPieces = totalPieces.filter(e => e.color != piece.color && e.rank != Rank.King)
+    val opponentPiecesPos = opponentPieces.map(e => (e.positionX, e.positionY)).toArray
+    opponentPiecesPos
+  }
+
   /** isLegalMove returns true if the next move for king is legal i.e, the next square is not under opponent piece move range else false */
   def getKingLegalMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val opponentsMoves = getOpponentAttkMoves(piece).distinct
     val suggestedMoves = MoveSuggestion.suggestMoveKing(piece)
 
     /** opponentMoveCordnts and suggestedMoveCordnts only stores x and y coordinates values in the Array */
-    val opponentMoveCordnts = opponentsMoves.map(e => (e._1, e._2))
-    val suggestedMoveCordnts = suggestedMoves.map(e => (e._1, e._2))
+    val opponentMoveCordnts: Array[(Int, Int)] = opponentsMoves.map(e => (e._1, e._2)).toArray
+    val suggestedMoveCordnts: Array[(Int, Int)] = suggestedMoves.map(e => (e._1, e._2)).toArray
+    val oppntPiecesPosCordnts: Array[(Int, Int)] = getOppntPiecesPos(piece)
 
-    /** difference between suggested moves and opponents attack moves */
-    val difference = (suggestedMoveCordnts.toSet -- opponentMoveCordnts.toSet).toArray
+    /**
+     * compliment set operation between suggested moves and opponents attack moves (this operation implements A compliment B set
+     * operation between suggestedMoveCordnts and opponentMoveCordnts, and )
+     * */
+    val compliment = (suggestedMoveCordnts.toSet &~ opponentMoveCordnts.toSet).toArray
+
+    /**
+     * intersection set operation between suggestedMoveCordnts  and oppntPiecesPosCordnts (this operation implements A intersection B set
+     * operation between suggestedMoveCordnts and oppntPiecesPosCordnts, and returns the tuples that are common to both A and B.)
+     * */
+    val intersection = opponentMoveCordnts.intersect(oppntPiecesPosCordnts)
+
+    /** union set operation between compliment and intersection collections (this will collects every elements from both collections into single distinct collection of elements) */
+    val union = (compliment.toSet | intersection.toSet).toArray
 
     /** legal moves stores final filtered legal moves for king */
     val kingLegalMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
     /**
      * here we are filtering suggestedMoves elements by comparing each element e._1 and e._2 which are x and y value respectively
-     * with difference array list which stores filtered legal moves for king
+     * with compliment array list which stores filtered legal moves for king
      * */
-    suggestedMoves.foreach(e => difference.foreach(x => if ((e._1, e._2) == x) kingLegalMoves.addOne(e)))
+    //    suggestedMoves.foreach(e => union.foreach(x => if ((e._1, e._2) == x) kingLegalMoves.addOne(e)))
+    suggestedMoves.foreach(e => compliment.foreach(x => if ((e._1, e._2) == x) kingLegalMoves.addOne(e)))
 
     kingLegalMoves
   }
@@ -118,10 +149,48 @@ object CheckDetector {
 
     if (onlyOppntAttackmoves.contains((king.positionX, king.positionY)) && onlyOppntAttackmoves.contains((piece.positionX, piece.positionY)))
       board(x)(y) = piece
+
       false
     else
       board(x)(y) = piece
       true
+  }
+
+  /** this functions checks weather the piece can capture the opponent piece which is checking the player king and returns true if it can capture else false */
+//  def canCaptureOpponent(piece: Piece): Boolean = {
+//    val king = getKing(piece)
+//    val x = king.positionX
+//    val y = king.positionY
+//    val oppntX = getOpponentPiece.positionX
+//    val oppntY = getOpponentPiece.positionY
+//
+//    board(x)(y) = defaultPiece
+//    val rookMoves = suggestMoveRook(piece)
+//    val checkingPiecePos = (oppntX, oppntY)
+//    var canCapture = false
+//
+//    rookMoves.foreach(e => boundary {
+//      if ((e._1, e._2) == checkingPiecePos) {
+//        canCapture = true
+//        boundary.break()
+//      }
+//    })
+//    canCapture
+//  }
+
+  /** this function locates opponent king of the given piece on board and returns it */
+  def getOppntKing(piece: Piece): Piece = {
+    val index = totalPieces.indexWhere(e => e.color != piece.color && e.rank == Rank.King)
+    val king = totalPieces(index)
+    king
+  }
+
+
+  /** this function locates king of the given piece on board and returns it */
+  def getKing(piece: Piece): Piece = {
+    val index = totalPieces.indexWhere(e => e.color == piece.color && e.rank == Rank.King)
+    val king = totalPieces(index)
+    king
   }
 
 }

@@ -1,6 +1,7 @@
 package test.models
 
-import main.models.{Color, Game, Piece, Rank}
+import main.enums.*
+import main.models.{Game, Piece}
 import main.utils.MoveSuggestion
 import main.utils.Board.*
 import org.junit.Test
@@ -105,7 +106,7 @@ class MoveSuggestionTest {
     board(4)(3) = wp33
     board(4)(5) = wp44
 
-    assertEquals(ArrayBuffer((2, 3), (3, 3),(2, 2), (2, 4) ), MoveSuggestion.suggestMovePawn(bp11))
+    assertEquals(ArrayBuffer((2, 3), (3, 3), (2, 2), (2, 4)), MoveSuggestion.suggestMovePawn(bp11))
     assertEquals(ArrayBuffer((4, 4), (4, 3), (4, 5)), MoveSuggestion.suggestMovePawn(bp22))
   }
 

@@ -1,10 +1,11 @@
 package main.utils
 
-import main.models.{Color, Piece, Rank}
-
+import main.models.Piece
+import main.enums.*
 import scala.collection.mutable.ArrayBuffer
 import scala.util.boundary
 import main.utils.Board.*
+import main.utils.Utils.*
 
 object MoveSuggestion {
   /**
@@ -21,60 +22,151 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
-    if (CheckDetector.isLegalMove(piece)) {
+    //    /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+    //    if (CheckDetector.isLegalMove(piece)) {
+    //      /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
+    //      if ((positionX, positionY) == (initialX, initialY)) {
+    //        if (piece.color == Color.White) {
+    //          var count = 1
+    //          while (board(positionX - count)(positionY).value == "" && count < 3) {
+    //            suggestedMoves.addOne((positionX - count, positionY, false))
+    //            count += 1
+    //          }
+    //        } else {
+    //          var count = 1
+    //          while (board(positionX + count)(positionY).value == "" && count < 3) {
+    //            suggestedMoves.addOne((positionX + count, positionY, false))
+    //            count += 1
+    //          }
+    //        }
+    //      }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    /** White piece */
+    if (piece.color == Color.White) {
       /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
       if ((positionX, positionY) == (initialX, initialY)) {
-        if (piece.color == Color.White) {
-          var count = 1
-          while (board(positionX - count)(positionY).value == "" && count < 3) {
-            suggestedMoves.addOne((positionX - count, positionY, false))
-            count += 1
-          }
-        } else {
-          var count = 1
-          while (board(positionX + count)(positionY).value == "" && count < 3) {
-            suggestedMoves.addOne((positionX + count, positionY, false))
-            count += 1
-          }
+        var count = 1
+        while (board(positionX - count)(positionY).value == "" && count < 3) {
+          suggestedMoves.addOne((positionX - count, positionY, false))
+          count += 1
         }
       }
 
       /** froward move from piece current position when it is not anymore in its default position */
-      if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White && positionX > 0) {
+      if ((positionX, positionY) != (initialX, initialY) && positionX > 0) {
         if (board(positionX - 1)(positionY).value == "")
           suggestedMoves.addOne((positionX - 1, positionY, false))
       }
-      if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black && positionX < 7) {
+
+      // diagonal moves - attack moves
+      /** diagonal left-up (top & left square position from selected piece) */
+      if (positionX > 0 && positionY > 0)
+        if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
+          suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+
+      /** diagonal right-up right (top & right square position from selected piece) */
+      if (positionX > 0 && positionY < 7)
+        if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
+          suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+    }
+
+    /** Black piece */
+    if (piece.color == Color.Black) {
+      /** initial pawn piece move condition, if the pawn has not been moved from it's initial position it can move 2 squares at a move */
+      if ((positionX, positionY) == (initialX, initialY)) {
+        var count = 1
+        while (board(positionX + count)(positionY).value == "" && count < 3) {
+          suggestedMoves.addOne((positionX + count, positionY, false))
+          count += 1
+        }
+      }
+
+      /** froward move from piece current position when it is not anymore in its default position */
+      if ((positionX, positionY) != (initialX, initialY) && positionX < 7) {
         if (board(positionX + 1)(positionY).value == "")
           suggestedMoves.addOne((positionX + 1, positionY, false))
       }
 
-      /** white piece diagonal move */
-      if (piece.color == Color.White) {
-        /** diagonal left-up (top & left square position from selected piece) */
-        if (positionX > 0 && positionY > 0)
-          if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
-            suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+      //diagonal moves - attack moves
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      if (positionX < 7 && positionY < 7)
+        if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
+          suggestedMoves.addOne((positionX + 1, positionY + 1, true))
 
-        /** diagonal right-up right (top & right square position from selected piece) */
-        if (positionX > 0 && positionY < 7)
-          if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
-            suggestedMoves.addOne((positionX - 1, positionY + 1, true))
-      }
-
-      /** black piece diagonal move */
-      if (piece.color == Color.Black) {
-        /** diagonal left-down (bottom & left square position from selected piece) */
-        if (positionX < 7 && positionY < 7)
-          if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
-            suggestedMoves.addOne((positionX + 1, positionY + 1, true))
-
-        /** diagonal right-down (bottom & right square position from selected piece) */
-        if (positionX < 7 && positionY > 0)
-          if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
-            suggestedMoves.addOne((positionX + 1, positionY - 1, true))
-      }
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      if (positionX < 7 && positionY > 0)
+        if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
+          suggestedMoves.addOne((positionX + 1, positionY - 1, true))
     }
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    //    /** froward move from piece current position when it is not anymore in its default position */
+    //    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.White && positionX > 0) {
+    //      if (board(positionX - 1)(positionY).value == "")
+    //        suggestedMoves.addOne((positionX - 1, positionY, false))
+    //    }
+    //    if ((positionX, positionY) != (initialX, initialY) && piece.color == Color.Black && positionX < 7) {
+    //      if (board(positionX + 1)(positionY).value == "")
+    //        suggestedMoves.addOne((positionX + 1, positionY, false))
+    //    }
+
+    //    /** white piece diagonal move */
+    //    if (piece.color == Color.White) {
+    //      /** diagonal left-up (top & left square position from selected piece) */
+    //      if (positionX > 0 && positionY > 0)
+    //        if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+    //
+    //      /** diagonal right-up right (top & right square position from selected piece) */
+    //      if (positionX > 0 && positionY < 7)
+    //        if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+    //    }
+
+    //    /** black piece diagonal move */
+    //    if (piece.color == Color.Black) {
+    //      /** diagonal left-down (bottom & left square position from selected piece) */
+    //      if (positionX < 7 && positionY < 7)
+    //        if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX + 1, positionY + 1, true))
+    //
+    //      /** diagonal right-down (bottom & right square position from selected piece) */
+    //      if (positionX < 7 && positionY > 0)
+    //        if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX + 1, positionY - 1, true))
+    //    }
+    //  }
+
+    //  /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+    //  else
+    //  {
+    //    /** white piece diagonal move */
+    //    if (piece.color == Color.White) {
+    //      /** diagonal left-up (top & left square position from selected piece) */
+    //      if (positionX > 0 && positionY > 0)
+    //        if (board(positionX - 1)(positionY - 1).color != Color.None && board(positionX - 1)(positionY - 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX - 1, positionY - 1, true))
+    //
+    //      /** diagonal right-up right (top & right square position from selected piece) */
+    //      if (positionX > 0 && positionY < 7)
+    //        if (board(positionX - 1)(positionY + 1).color != Color.None && board(positionX - 1)(positionY + 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX - 1, positionY + 1, true))
+    //    }
+    //
+    //    /** black piece diagonal move */
+    //    if (piece.color == Color.Black) {
+    //      /** diagonal left-down (bottom & left square position from selected piece) */
+    //      if (positionX < 7 && positionY < 7)
+    //        if (board(positionX + 1)(positionY + 1).color != Color.None && board(positionX + 1)(positionY + 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX + 1, positionY + 1, true))
+    //
+    //      /** diagonal right-down (bottom & right square position from selected piece) */
+    //      if (positionX < 7 && positionY > 0)
+    //        if (board(positionX + 1)(positionY - 1).color != Color.None && board(positionX + 1)(positionY - 1).color != piece.color)
+    //          suggestedMoves.addOne((positionX + 1, positionY - 1, true))
+    //    }
+    //  }
     suggestedMoves
   }
 
@@ -92,156 +184,265 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
-    if (CheckDetector.isLegalMove(piece)) {
-      /** WHITE PIECE */
-
+    /** WHITE PIECE */
+    if (piece.color == Color.White) {
       /** front movement */
-      if (positionX > 0 && piece.color == Color.White) {
+      if (positionX > 0) {
         boundary {
           for (x <- (positionX - 1) to 0 by -1) {
             val nextSquare = board(x)(positionY)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((x, positionY, false))
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((x, positionY, false))
+
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
             }
-            if (nextSquare.color == Color.Black) {
-              suggestedMoves.addOne((x, positionY, true))
-              boundary.break()
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
             }
             if (nextSquare.color == piece.color)
               boundary.break()
           }
         }
+
       }
 
       /** right movement */
-      if (positionY < 7 && piece.color == Color.White) {
+      if (positionY < 7) {
         boundary {
           for (y <- (positionY + 1) to 7 by 1) {
             val nextSquare = board(positionX)(y)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((positionX, y, false))
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((positionX, y, false))
+
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
             }
-            if (nextSquare.color == Color.Black) {
-              suggestedMoves.addOne((positionX, y, true))
-              boundary.break()
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
             }
             if (nextSquare.color == piece.color)
               boundary.break()
           }
         }
+
       }
 
       /** back movement */
-      if (positionX < 7 && piece.color == Color.White) {
+      if (positionX < 7) {
         boundary {
           for (x <- (positionX + 1) to 7 by 1) {
             val nextSquare = board(x)(positionY)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((x, positionY, false))
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((x, positionY, false))
+
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
             }
-            if (nextSquare.color == Color.Black) {
-              suggestedMoves.addOne((x, positionY, true))
-              boundary.break()
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
             }
             if (nextSquare.color == piece.color)
               boundary.break()
           }
         }
+
       }
 
       /** left movement */
-      if (positionY > 0 && piece.color == Color.White) {
+      if (positionY > 0) {
         boundary {
           for (y <- (positionY - 1) to 0 by -1) {
             val nextSquare = board(positionX)(y)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((positionX, y, false))
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((positionX, y, false))
+
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
             }
-            if (nextSquare.color == Color.Black) {
-              suggestedMoves.addOne((positionX, y, true))
-              boundary.break()
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.Black)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
             }
             if (nextSquare.color == piece.color)
               boundary.break()
           }
         }
-      }
 
-
-      /** BLACK PIECE */
-
-      /** front movement */
-      if (positionX > 0 && piece.color == Color.Black) {
-        boundary {
-          for (x <- (positionX - 1) to 0 by -1) {
-            val nextSquare = board(x)(positionY)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((x, positionY, false))
-            }
-            if (nextSquare.color == Color.White) {
-              suggestedMoves.addOne((x, positionY, true))
-              boundary.break()
-            }
-            if (nextSquare.color == piece.color)
-              boundary.break()
-          }
-        }
-      }
-
-      /** right movement */
-      if (positionY < 7 && piece.color == Color.Black) {
-        boundary {
-          for (y <- (positionY + 1) to 7 by 1) {
-            val nextSquare = board(positionX)(y)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((positionX, y, false))
-            }
-            if (nextSquare.color == Color.White) {
-              suggestedMoves.addOne((positionX, y, true))
-              boundary.break()
-            }
-            if (nextSquare.color == piece.color)
-              boundary.break()
-          }
-        }
-      }
-
-      /** back movement */
-      if (positionX < 7 && piece.color == Color.Black) {
-        boundary {
-          for (x <- (positionX + 1) to 7 by 1) {
-            val nextSquare = board(x)(positionY)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((x, positionY, false))
-            }
-            if (nextSquare.color == Color.White) {
-              suggestedMoves.addOne((x, positionY, true))
-              boundary.break()
-            }
-            if (nextSquare.color == piece.color)
-              boundary.break()
-          }
-        }
-      }
-
-      /** left movement */
-      if (positionY > 0 && piece.color == Color.Black) {
-        boundary {
-          for (y <- (positionY - 1) to 0 by -1) {
-            val nextSquare = board(positionX)(y)
-            if (nextSquare.color == Color.None) {
-              suggestedMoves.addOne((positionX, y, false))
-            }
-            if (nextSquare.color == Color.White) {
-              suggestedMoves.addOne((positionX, y, true))
-              boundary.break()
-            }
-            if (nextSquare.color == piece.color)
-              boundary.break()
-          }
-        }
       }
     }
+
+    /** BLACK PIECE */
+    if (piece.color == Color.Black) {
+      /** front movement */
+      if (positionX > 0) {
+        boundary {
+          for (x <- (positionX - 1) to 0 by -1) {
+            val nextSquare = board(x)(positionY)
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((x, positionY, false))
+
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
+            }
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              val king = CheckDetector.getKing(piece)
+              val x = king.positionX
+              val y = king.positionY
+              val oppntX = CheckDetector.getOpponentPiece.positionX
+              val oppntY = CheckDetector.getOpponentPiece.positionY
+              //
+              //              board(x)(y) = CheckDetector.defaultPiece
+              //              val rookMoves = suggestMoveRook(piece)
+              //              val checkingPiecePos = (oppntX, oppntY)
+              //              var canCapture = false
+              //
+              //              rookMoves.foreach(e => boundary {
+              //                if ((e._1, e._2) == checkingPiecePos) {
+              //                  canCapture = true
+              //                  boundary.break()
+              //                }
+              //              })
+              //              board(x)(y) = king
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((x, positionY, true))
+              boundary.break()
+
+            }
+            if (nextSquare.color == piece.color)
+              boundary.break()
+
+          }
+        }
+
+      }
+
+      /** right movement */
+      if (positionY < 7) {
+        boundary {
+          for (y <- (positionY + 1) to 7 by 1) {
+            val nextSquare = board(positionX)(y)
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((positionX, y, false))
+
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
+            }
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
+            }
+            if (nextSquare.color == piece.color)
+              boundary.break()
+          }
+        }
+
+      }
+
+      /** back movement */
+      if (positionX < 7) {
+        boundary {
+          for (x <- (positionX + 1) to 7 by 1) {
+            val nextSquare = board(x)(positionY)
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((x, positionY, false))
+
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
+            }
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((x, positionY, true))
+                boundary.break()
+            }
+            if (nextSquare.color == piece.color)
+              boundary.break()
+          }
+        }
+
+      }
+
+      /** left movement */
+      if (positionY > 0) {
+        boundary {
+          for (y <- (positionY - 1) to 0 by -1) {
+            val nextSquare = board(positionX)(y)
+
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
+              if (nextSquare.color == Color.None)
+                suggestedMoves.addOne((positionX, y, false))
+
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
+            }
+
+            /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+            else {
+              if (nextSquare.color == Color.White)
+                suggestedMoves.addOne((positionX, y, true))
+                boundary.break()
+            }
+            if (nextSquare.color == piece.color)
+              boundary.break()
+          }
+        }
+
+      }
+    }
+
     suggestedMoves
   }
 
@@ -259,11 +460,11 @@ object MoveSuggestion {
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
-    if (CheckDetector.isLegalMove(piece)) {
-      /** white piece movement */
-      if (piece.color == Color.White) {
-        /** front movement */
-        if (positionX > 1 && positionY > 0 && positionY < 7) {
+    /** white piece movement */
+    if (piece.color == Color.White) {
+      /** front movement */
+      if (positionX > 1 && positionY > 0 && positionY < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares front 1 square left
           if (board(positionX - 2)(positionY - 1).color == Color.None)
             suggestedMoves.addOne((positionX - 2, positionY - 1, false))
@@ -277,10 +478,20 @@ object MoveSuggestion {
 
           if (board(positionX - 2)(positionY + 1).color == Color.Black)
             suggestedMoves.addOne((positionX - 2, positionY + 1, true))
-        }
+        } else {
+          //    2 squares front 1 square left
+          if (board(positionX - 2)(positionY - 1).color == Color.Black)
+            suggestedMoves.addOne((positionX - 2, positionY - 1, true))
 
-        /** right movement */
-        if (positionY < 6 && positionX > 0 && positionX < 7) {
+          //    2 squares front 1 square right
+          if (board(positionX - 2)(positionY + 1).color == Color.Black)
+            suggestedMoves.addOne((positionX - 2, positionY + 1, true))
+        }
+      }
+
+      /** right movement */
+      if (positionY < 6 && positionX > 0 && positionX < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares right 1 square up
           if (board(positionX - 1)(positionY + 2).color == Color.None)
             suggestedMoves.addOne((positionX - 1, positionY + 2, false))
@@ -294,10 +505,20 @@ object MoveSuggestion {
 
           if (board(positionX + 1)(positionY + 2).color == Color.Black)
             suggestedMoves.addOne((positionX + 1, positionY + 2, true))
-        }
+        } else {
+          //    2 squares right 1 square up
+          if (board(positionX - 1)(positionY + 2).color == Color.Black)
+            suggestedMoves.addOne((positionX - 1, positionY + 2, true))
 
-        /** back movement */
-        if (positionX < 6 && positionY > 0 && positionY < 7) {
+          //    2 squares right 1 square down
+          if (board(positionX + 1)(positionY + 2).color == Color.Black)
+            suggestedMoves.addOne((positionX + 1, positionY + 2, true))
+        }
+      }
+
+      /** back movement */
+      if (positionX < 6 && positionY > 0 && positionY < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares back 1 square left
           if (board(positionX + 2)(positionY - 1).color == Color.None)
             suggestedMoves.addOne((positionX + 2, positionY - 1, false))
@@ -311,10 +532,20 @@ object MoveSuggestion {
 
           if (board(positionX + 2)(positionY + 1).color == Color.Black)
             suggestedMoves.addOne((positionX + 2, positionY + 1, true))
-        }
+        } else {
+          //    2 squares back 1 square left
+          if (board(positionX + 2)(positionY - 1).color == Color.Black)
+            suggestedMoves.addOne((positionX + 2, positionY - 1, true))
 
-        /** left movement */
-        if (positionY > 1 && positionX > 0 && positionX < 7) {
+          //    2 squares back 1 square right
+          if (board(positionX + 2)(positionY + 1).color == Color.Black)
+            suggestedMoves.addOne((positionX + 2, positionY + 1, true))
+        }
+      }
+
+      /** left movement */
+      if (positionY > 1 && positionX > 0 && positionX < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares left 1 square up
           if (board(positionX - 1)(positionY - 2).color == Color.None)
             suggestedMoves.addOne((positionX - 1, positionY - 2, false))
@@ -328,14 +559,24 @@ object MoveSuggestion {
 
           if (board(positionX + 1)(positionY - 2).color == Color.Black)
             suggestedMoves.addOne((positionX + 1, positionY - 2, true))
+        } else {
+          //    2 squares left 1 square up
+          if (board(positionX - 1)(positionY - 2).color == Color.Black)
+            suggestedMoves.addOne((positionX - 1, positionY - 2, true))
+
+          //    2 squares left 1 square down
+          if (board(positionX + 1)(positionY - 2).color == Color.Black)
+            suggestedMoves.addOne((positionX + 1, positionY - 2, true))
         }
       }
+    }
 
 
-      /** black piece movement */
-      if (piece.color == Color.Black) {
-        /** front movement */
-        if (positionX > 1 && positionY > 0 && positionY < 7) {
+    /** black piece movement */
+    if (piece.color == Color.Black) {
+      /** front movement */
+      if (positionX > 1 && positionY > 0 && positionY < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares front 1 square left
           if (board(positionX - 2)(positionY - 1).color == Color.None)
             suggestedMoves.addOne((positionX - 2, positionY - 1, false))
@@ -349,10 +590,20 @@ object MoveSuggestion {
 
           if (board(positionX - 2)(positionY + 1).color == Color.White)
             suggestedMoves.addOne((positionX - 2, positionY + 1, true))
-        }
+        } else {
+          //    2 squares front 1 square left
+          if (board(positionX - 2)(positionY - 1).color == Color.White)
+            suggestedMoves.addOne((positionX - 2, positionY - 1, true))
 
-        /** right movement */
-        if (positionY < 6 && positionX > 0 && positionX < 7) {
+          //    2 squares front 1 square right
+          if (board(positionX - 2)(positionY + 1).color == Color.White)
+            suggestedMoves.addOne((positionX - 2, positionY + 1, true))
+        }
+      }
+
+      /** right movement */
+      if (positionY < 6 && positionX > 0 && positionX < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares right 1 square up
           if (board(positionX - 1)(positionY + 2).color == Color.None)
             suggestedMoves.addOne((positionX - 1, positionY + 2, false))
@@ -366,10 +617,20 @@ object MoveSuggestion {
 
           if (board(positionX + 1)(positionY + 2).color == Color.White)
             suggestedMoves.addOne((positionX + 1, positionY + 2, true))
-        }
+        } else {
+          //    2 squares right 1 square up
+          if (board(positionX - 1)(positionY + 2).color == Color.White)
+            suggestedMoves.addOne((positionX - 1, positionY + 2, true))
 
-        /** back movement */
-        if (positionX < 6 && positionY > 0 && positionY < 7) {
+          //    2 squares right 1 square down
+          if (board(positionX + 1)(positionY + 2).color == Color.White)
+            suggestedMoves.addOne((positionX + 1, positionY + 2, true))
+        }
+      }
+
+      /** back movement */
+      if (positionX < 6 && positionY > 0 && positionY < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares back 1 square left
           if (board(positionX + 2)(positionY - 1).color == Color.None)
             suggestedMoves.addOne((positionX + 2, positionY - 1, false))
@@ -383,10 +644,20 @@ object MoveSuggestion {
 
           if (board(positionX + 2)(positionY + 1).color == Color.White)
             suggestedMoves.addOne((positionX + 2, positionY + 1, true))
-        }
+        } else {
+          //    2 squares back 1 square left
+          if (board(positionX + 2)(positionY - 1).color == Color.White)
+            suggestedMoves.addOne((positionX + 2, positionY - 1, true))
 
-        /** left movement */
-        if (positionY > 1 && positionX > 0 && positionX < 7) {
+          //    2 squares back 1 square right
+          if (board(positionX + 2)(positionY + 1).color == Color.White)
+            suggestedMoves.addOne((positionX + 2, positionY + 1, true))
+        }
+      }
+
+      /** left movement */
+      if (positionY > 1 && positionX > 0 && positionX < 7) {
+        if (CheckDetector.isLegalMove(piece)) {
           //    2 squares left 1 square up
           if (board(positionX - 1)(positionY - 2).color == Color.None)
             suggestedMoves.addOne((positionX - 1, positionY - 2, false))
@@ -400,9 +671,18 @@ object MoveSuggestion {
 
           if (board(positionX + 1)(positionY - 2).color == Color.White)
             suggestedMoves.addOne((positionX + 1, positionY - 2, true))
+        } else {
+          //    2 squares left 1 square up
+          if (board(positionX - 1)(positionY - 2).color == Color.White)
+            suggestedMoves.addOne((positionX - 1, positionY - 2, true))
+
+          //    2 squares left 1 square down
+          if (board(positionX + 1)(positionY - 2).color == Color.White)
+            suggestedMoves.addOne((positionX + 1, positionY - 2, true))
         }
       }
     }
+
     suggestedMoves
   }
 
@@ -419,191 +699,255 @@ object MoveSuggestion {
      * check on square in board in that given x , y coordinates
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-   
-    if (CheckDetector.isLegalMove(piece)) {
-      /** white piece diagonal move */
-      if (piece.color == Color.White) {
-        /** diagonal left-up (top & left square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX > 0 && positionY > 0) {
-            if (positionX - count >= 0 && positionY - count >= 0) {
+
+    /** white piece diagonal move */
+    if (piece.color == Color.White) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX - count)(positionY - count).color == Color.None)
                 suggestedMoves.addOne((positionX - count, positionY - count, false))
 
               if (board(positionX - count)(positionY - count).color == Color.Black)
                 suggestedMoves.addOne((positionX - count, positionY - count, true))
                 boundary.break()
-
-              if (board(positionX - count)(positionY - count).color == Color.White) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX - count)(positionY - count).color == Color.Black)
+                suggestedMoves.addOne((positionX - count, positionY - count, true))
+                boundary.break()
+            }
+
+            if (board(positionX - count)(positionY - count).color == Color.White) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal right-up right (top & right square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX > 0 && positionY < 7) {
-            if (positionX - count >= 0 && positionY + count <= 7) {
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX - count)(positionY + count).color == Color.None)
                 suggestedMoves.addOne((positionX - count, positionY + count, false))
 
               if (board(positionX - count)(positionY + count).color == Color.Black)
                 suggestedMoves.addOne((positionX + count, positionY + count, true))
                 boundary.break()
-
-              if (board(positionX - count)(positionY + count).color == Color.White) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX - count)(positionY + count).color == Color.Black)
+                suggestedMoves.addOne((positionX + count, positionY + count, true))
+                boundary.break()
+            }
+
+            if (board(positionX - count)(positionY + count).color == Color.White) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal right-down (bottom & right square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX < 7 && positionY < 7) {
-            if (positionX + count <= 7 && positionY + count <= 7) {
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX + count)(positionY + count).color == Color.None)
                 suggestedMoves.addOne((positionX + count, positionY + count, false))
 
               if (board(positionX + count)(positionY + count).color == Color.Black)
                 suggestedMoves.addOne((positionX + count, positionY + count, true))
                 boundary.break()
-
-              if (board(positionX + count)(positionY + count).color == Color.White) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX + count)(positionY + count).color == Color.Black)
+                suggestedMoves.addOne((positionX + count, positionY + count, true))
+                boundary.break()
+            }
+
+            if (board(positionX + count)(positionY + count).color == Color.White) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal left-down (bottom & left square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX < 7 && positionY > 0) {
-            if (positionX + count <= 7 && positionY - count >= 0) {
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX + count)(positionY - count).color == Color.None)
                 suggestedMoves.addOne((positionX + count, positionY - count, false))
 
               if (board(positionX + count)(positionY - count).color == Color.Black)
                 suggestedMoves.addOne((positionX + count, positionY - count, true))
                 boundary.break()
-
-              if (board(positionX + count)(positionY - count).color == Color.White) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX + count)(positionY - count).color == Color.Black)
+                suggestedMoves.addOne((positionX + count, positionY - count, true))
+                boundary.break()
+            }
+
+
+            if (board(positionX + count)(positionY - count).color == Color.White) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
-
       }
 
-      /** black piece diagonal move */
-      if (piece.color == Color.Black) {
-        /** diagonal left-up (top & left square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX > 0 && positionY > 0) {
-            if (positionX - count >= 0 && positionY - count >= 0) {
+    }
+
+    /** black piece diagonal move */
+    if (piece.color == Color.Black) {
+      /** diagonal left-up (top & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY > 0) {
+          if (positionX - count >= 0 && positionY - count >= 0) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX - count)(positionY - count).color == Color.None)
                 suggestedMoves.addOne((positionX - count, positionY - count, false))
 
               if (board(positionX - count)(positionY - count).color == Color.White)
                 suggestedMoves.addOne((positionX - count, positionY - count, true))
                 boundary.break()
-
-              if (board(positionX - count)(positionY - count).color == Color.Black) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX - count)(positionY - count).color == Color.White)
+                suggestedMoves.addOne((positionX - count, positionY - count, true))
+                boundary.break()
+            }
+
+            if (board(positionX - count)(positionY - count).color == Color.Black) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal right-up right (top & right square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX > 0 && positionY < 7) {
-            if (positionX - count >= 0 && positionY + count <= 7) {
+      /** diagonal right-up right (top & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX > 0 && positionY < 7) {
+          if (positionX - count >= 0 && positionY + count <= 7) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX - count)(positionY + count).color == Color.None)
                 suggestedMoves.addOne((positionX - count, positionY + count, false))
 
               if (board(positionX - count)(positionY + count).color == Color.White)
                 suggestedMoves.addOne((positionX - count, positionY + count, true))
                 boundary.break()
-
-              if (board(positionX - count)(positionY + count).color == Color.Black) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX - count)(positionY + count).color == Color.White)
+                suggestedMoves.addOne((positionX - count, positionY + count, true))
+                boundary.break()
+            }
+
+            if (board(positionX - count)(positionY + count).color == Color.Black) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal right-down (bottom & right square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX < 7 && positionY < 7) {
-            if (positionX + count <= 7 && positionY + count <= 7) {
+      /** diagonal right-down (bottom & right square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY < 7) {
+          if (positionX + count <= 7 && positionY + count <= 7) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX + count)(positionY + count).color == Color.None)
                 suggestedMoves.addOne((positionX + count, positionY + count, false))
 
               if (board(positionX + count)(positionY + count).color == Color.White)
                 suggestedMoves.addOne((positionX + count, positionY + count, true))
                 boundary.break()
-
-              if (board(positionX + count)(positionY + count).color == Color.Black) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX + count)(positionY + count).color == Color.White)
+                suggestedMoves.addOne((positionX + count, positionY + count, true))
+                boundary.break()
+            }
+
+            if (board(positionX + count)(positionY + count).color == Color.Black) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
+      }
 
-        /** diagonal left-down (bottom & left square position from selected piece) */
-        boundary {
-          var count = 1
-          while (positionX < 7 && positionY > 0) {
-            if (positionX + count <= 7 && positionY - count >= 0) {
+      /** diagonal left-down (bottom & left square position from selected piece) */
+      boundary {
+        var count = 1
+        while (positionX < 7 && positionY > 0) {
+          if (positionX + count <= 7 && positionY - count >= 0) {
+            /** if it is legal move (move that does not put the player’s own king in check) then generate moves according to rules */
+            if (CheckDetector.isLegalMove(piece)) {
               if (board(positionX + count)(positionY - count).color == Color.None)
                 suggestedMoves.addOne((positionX + count, positionY - count, false))
 
               if (board(positionX + count)(positionY - count).color == Color.White)
                 suggestedMoves.addOne((positionX + count, positionY - count, true))
                 boundary.break()
-
-              if (board(positionX + count)(positionY - count).color == Color.Black) {
-                boundary.break()
-              }
-              count += 1
             } else {
+              /** if it is illegal and the opponent piece is in player's piece attack range then it can move to opponent position and can capture it */
+              if (board(positionX + count)(positionY - count).color == Color.White)
+                suggestedMoves.addOne((positionX + count, positionY - count, true))
+                boundary.break()
+            }
+
+            if (board(positionX + count)(positionY - count).color == Color.Black) {
               boundary.break()
             }
+            count += 1
+          } else {
+            boundary.break()
           }
         }
       }
     }
+
     suggestedMoves
   }
 
@@ -714,7 +1058,7 @@ object MoveSuggestion {
           suggestedMoves.addOne((positionX, positionY - 1, true))
       }
     }
-    
+
     suggestedMoves
   }
 

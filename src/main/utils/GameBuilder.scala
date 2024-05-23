@@ -1,7 +1,8 @@
 package main.utils
 
-import main.models.{Color, Piece, Rank}
+import main.models.{Piece}
 
+import main.enums.*
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 

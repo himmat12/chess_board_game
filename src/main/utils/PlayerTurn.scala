@@ -1,6 +1,6 @@
 package main.utils
 
-import main.models.Color
+import main.enums.*
 
 /**
  * playerTurn stores the state of each player turn to move the piece
