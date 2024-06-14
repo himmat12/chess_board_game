@@ -2,7 +2,7 @@ package main.models
 
 import main.models.Piece
 import main.utils.Board.*
-import main.utils.{CheckDetector, GameBuilder, MoveSuggestion, MoveSuggestionAttack, PlayerTurn}
+import main.utils.{CheckDetector, GameBuilder, LegalMoveSuggestion, PlayerTurn}
 
 import main.enums.*
 import scala.collection.mutable.ArrayBuffer
@@ -78,10 +78,10 @@ class Game {
         }
         else {
           if ((board(x)(y).positionX + board(x)(y).positionY) % 2 == 0)
-          //            print(placeholder(s"${boardMap(x)(y)} "))
+            //            print(placeholder(s"${boardMap(x)(y)} "))
             print(placeholder(" W "))
           else
-          //            print(placeholder(s"${boardMap(x)(y)} "))
+            //            print(placeholder(s"${boardMap(x)(y)} "))
             print(placeholder(" B "))
         }
       }
@@ -99,7 +99,7 @@ class Game {
    * captures any opponent pieces if its in its destination position
    * */
   def moveTo(pos: String, piece: Piece): Unit = {
-    val suggestedMoves = MoveSuggestion.getPiecesLegalMoves(piece).map(e => (e._1, e._2))
+    val suggestedMoves = LegalMoveSuggestion.getPiecesLegalMoves(piece).map(e => (e._1, e._2))
 
     val posCoordinate = decryptFromPoseString(pos)
     val x = posCoordinate._1
@@ -117,9 +117,6 @@ class Game {
           val opponentPieceIndex = totalPieces.indexWhere(e => e.value == board(x)(y).value)
           totalPieces.remove(opponentPieceIndex)
         }
-        //        else {
-        //          /** todo: invoke check detector here */
-        //        }
       }
 
       /** updating piece current position to new destination (x, y) position */
@@ -147,32 +144,36 @@ class Game {
    */
   def generateMove(piece: Piece): Unit = {
     printPlayerTurn()
+    if (CheckDetector.isLegalMove(piece)) {
+      if (piece.rank == Rank.Pawn)
+        val suggestedMoves = LegalMoveSuggestion.suggestMovePawn(piece)
+        markSuggestedMoves(piece, suggestedMoves)
 
-    if (piece.rank == Rank.Pawn)
-      val suggestedMoves = MoveSuggestion.suggestMovePawn(piece)
+      if (piece.rank == Rank.Rook)
+        val suggestedMoves = LegalMoveSuggestion.suggestMoveRook(piece)
+        markSuggestedMoves(piece, suggestedMoves)
+
+      if (piece.rank == Rank.Knight)
+        val suggestedMoves = LegalMoveSuggestion.suggestMoveKnight(piece)
+        markSuggestedMoves(piece, suggestedMoves)
+
+      if (piece.rank == Rank.Bishop)
+        val suggestedMoves = LegalMoveSuggestion.suggestMoveBishop(piece)
+        markSuggestedMoves(piece, suggestedMoves)
+
+      if (piece.rank == Rank.Queen)
+        val suggestedMoves = LegalMoveSuggestion.suggestMoveQueen(piece)
+        markSuggestedMoves(piece, suggestedMoves)
+
+      if (piece.rank == Rank.King)
+        val suggestedMoves = CheckDetector.getKingLegalMoves(piece)
+        markSuggestedMoves(piece, suggestedMoves)
+    } else {
+      val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
       markSuggestedMoves(piece, suggestedMoves)
-
-    if (piece.rank == Rank.Rook)
-      val suggestedMoves = MoveSuggestion.suggestMoveRook(piece)
-      markSuggestedMoves(piece, suggestedMoves)
-
-    if (piece.rank == Rank.Knight)
-      val suggestedMoves = MoveSuggestion.suggestMoveKnight(piece)
-      markSuggestedMoves(piece, suggestedMoves)
-
-    if (piece.rank == Rank.Bishop)
-      val suggestedMoves = MoveSuggestion.suggestMoveBishop(piece)
-      markSuggestedMoves(piece, suggestedMoves)
-
-    if (piece.rank == Rank.Queen)
-      val suggestedMoves = MoveSuggestion.suggestMoveQueen(piece)
-      markSuggestedMoves(piece, suggestedMoves)
-
-    if (piece.rank == Rank.King)
-      val suggestedMoves = CheckDetector.getKingLegalMoves(piece)
-      markSuggestedMoves(piece, suggestedMoves)
-
+    }
     PlayerTurn.resetSelectedPiece()
+
   }
 
 

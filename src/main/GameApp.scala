@@ -3,7 +3,7 @@ package main
 import main.enums.*
 import main.models.{Game, Piece}
 import main.utils.InputValidator.*
-import main.utils.{PlayerTurn}
+import main.utils.{CheckDetector, PlayerTurn}
 import main.utils.Board.*
 import main.utils.CheckDetector.*
 
@@ -55,6 +55,7 @@ object GameApp {
             setOpponentPiece(selectedPiece)
             println()
             println(s"<<< ${king.color} ${king.rank} [${king.value}] is in Check!!! >>>")
+            println(s"<<< Checked by: ${CheckDetector.getOpponentPiece.color} ${CheckDetector.getOpponentPiece.rank} [${CheckDetector.getOpponentPiece.value}] >>>")
             if (isCheckmate(king)) {
               println()
               println(s"Game Over: ${selectedPiece.color} Player wins.")
