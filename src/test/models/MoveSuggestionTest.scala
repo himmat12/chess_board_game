@@ -1,7 +1,8 @@
 package test.models
 
-import main.models.{Color, Game, Piece, Rank}
-import main.utils.MoveSuggestion
+import main.enums.*
+import main.models.{Game, Piece}
+import main.utils.LegalMoveSuggestion
 import main.utils.Board.*
 import org.junit.Test
 import org.junit.Assert.*
@@ -21,15 +22,15 @@ class MoveSuggestionTest {
     val wp01 = new Piece(6, 3, "WP3", Color.White, Rank.Pawn, 6, 3)
     val wp02 = new Piece(6, 3, "WP3", Color.White, Rank.Pawn, 5, 3)
 
-    assertEquals(ArrayBuffer((5, 3), (4, 3)), MoveSuggestion.suggestMovePawn(wp01))
-    assertEquals(ArrayBuffer((4, 3)), MoveSuggestion.suggestMovePawn(wp02))
+    assertEquals(ArrayBuffer((5, 3), (4, 3)), LegalMoveSuggestion.suggestMovePawn(wp01))
+    assertEquals(ArrayBuffer((4, 3)), LegalMoveSuggestion.suggestMovePawn(wp02))
 
     /** piece movement from top of board i.e, black piece side */
     val bp01 = new Piece(1, 3, "BP3", Color.Black, Rank.Pawn, 1, 3)
     val bp02 = new Piece(1, 3, "BP3", Color.Black, Rank.Pawn, 2, 3)
 
-    assertEquals(ArrayBuffer((2, 3), (3, 3)), MoveSuggestion.suggestMovePawn(bp01))
-    assertEquals(ArrayBuffer((3, 3)), MoveSuggestion.suggestMovePawn(bp02))
+    assertEquals(ArrayBuffer((2, 3), (3, 3)), LegalMoveSuggestion.suggestMovePawn(bp01))
+    assertEquals(ArrayBuffer((3, 3)), LegalMoveSuggestion.suggestMovePawn(bp02))
 
   }
 
@@ -47,8 +48,8 @@ class MoveSuggestionTest {
     val wp02 = new Piece(6, 4, "WP4", Color.White, Rank.Pawn, 5, 4)
     board(4)(4).value = "WP4"
 
-    assertEquals(ArrayBuffer(), MoveSuggestion.suggestMovePawn(wp01))
-    assertEquals(ArrayBuffer(), MoveSuggestion.suggestMovePawn(wp02))
+    assertEquals(ArrayBuffer(), LegalMoveSuggestion.suggestMovePawn(wp01))
+    assertEquals(ArrayBuffer(), LegalMoveSuggestion.suggestMovePawn(wp02))
 
     /** piece movement from top of board i.e, black piece side */
     // when piece has not moved from its default position
@@ -59,8 +60,8 @@ class MoveSuggestionTest {
     val bp02 = new Piece(1, 4, "BP4", Color.Black, Rank.Pawn, 2, 4)
     board(3)(4).value = "BP4"
 
-    assertEquals(ArrayBuffer(), MoveSuggestion.suggestMovePawn(bp01))
-    assertEquals(ArrayBuffer(), MoveSuggestion.suggestMovePawn(bp02))
+    assertEquals(ArrayBuffer(), LegalMoveSuggestion.suggestMovePawn(bp01))
+    assertEquals(ArrayBuffer(), LegalMoveSuggestion.suggestMovePawn(bp02))
   }
 
   /** testing diagonal attack move if there are any opponents pieces in the corresponding diagonal square from piece's current square */
@@ -85,8 +86,8 @@ class MoveSuggestionTest {
     board(4)(7) = bp03
     board(4)(5) = bp04
 
-    assertEquals(ArrayBuffer((5, 3), (4, 3), (5, 2), (5, 4)), MoveSuggestion.suggestMovePawn(wp01))
-    assertEquals(ArrayBuffer((4, 6), (4, 5), (4, 7)), MoveSuggestion.suggestMovePawn(wp02))
+    assertEquals(ArrayBuffer((5, 3), (4, 3), (5, 2), (5, 4)), LegalMoveSuggestion.suggestMovePawn(wp01))
+    assertEquals(ArrayBuffer((4, 6), (4, 5), (4, 7)), LegalMoveSuggestion.suggestMovePawn(wp02))
 
     /** piece movement from top of board i.e, black piece side */
     // when piece has not moved from its default position
@@ -105,8 +106,8 @@ class MoveSuggestionTest {
     board(4)(3) = wp33
     board(4)(5) = wp44
 
-    assertEquals(ArrayBuffer((2, 3), (3, 3),(2, 2), (2, 4) ), MoveSuggestion.suggestMovePawn(bp11))
-    assertEquals(ArrayBuffer((4, 4), (4, 3), (4, 5)), MoveSuggestion.suggestMovePawn(bp22))
+    assertEquals(ArrayBuffer((2, 3), (3, 3), (2, 2), (2, 4)), LegalMoveSuggestion.suggestMovePawn(bp11))
+    assertEquals(ArrayBuffer((4, 4), (4, 3), (4, 5)), LegalMoveSuggestion.suggestMovePawn(bp22))
   }
 
   /** todo: test logic needs to be implemented (this tests always fails as of now) */

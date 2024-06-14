@@ -1,6 +1,8 @@
+
 package main.utils
 
-import main.models.{Color, Piece, Rank}
+import main.enums.{Color, Rank}
+import main.models.Piece
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.boundary
@@ -10,7 +12,7 @@ object MoveSuggestion {
   /**
    * suggestMovePawn() function suggests all legal moves for pawn in its current position in pieces
    * */
-  def suggestMovePawn(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  private def suggestMovePawn(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -81,7 +83,7 @@ object MoveSuggestion {
   /**
    * suggestMoveRook() function suggests all legal moves for rook in its current position in pieces
    * */
-  def suggestMoveRook(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  private def suggestMoveRook(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -248,7 +250,7 @@ object MoveSuggestion {
   /**
    * suggestMoveKnight() function suggests all legal moves for Knight in its current position in pieces
    * */
-  def suggestMoveKnight(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  private def suggestMoveKnight(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -409,7 +411,7 @@ object MoveSuggestion {
   /**
    * suggestMoveBishop() function suggests all legal moves for bishop in its current position in pieces
    * */
-  def suggestMoveBishop(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  private def suggestMoveBishop(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val positionX = piece.positionX
     val positionY = piece.positionY
     val initialX = piece.initialX
@@ -419,7 +421,7 @@ object MoveSuggestion {
      * check on square in board in that given x , y coordinates
      * */
     val suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
-   
+
     if (CheckDetector.isLegalMove(piece)) {
       /** white piece diagonal move */
       if (piece.color == Color.White) {
@@ -610,7 +612,7 @@ object MoveSuggestion {
   /**
    * suggestMoveQueen() function suggests all legal moves for queen in its current position in pieces
    * */
-  def suggestMoveQueen(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  private def suggestMoveQueen(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     val rookMoves = suggestMoveRook(piece)
     val bishopMoves = suggestMoveBishop(piece)
 
@@ -714,12 +716,12 @@ object MoveSuggestion {
           suggestedMoves.addOne((positionX, positionY - 1, true))
       }
     }
-    
+
     suggestedMoves
   }
 
   /** generates legal moves for selected piece and returns the array of moves */
-  def getPiecesLegalMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
+  def getPiecesMoves(piece: Piece): ArrayBuffer[(Int, Int, Boolean)] = {
     var suggestedMoves = ArrayBuffer[(Int, Int, Boolean)]()
 
     if (piece.rank == Rank.Pawn)
@@ -744,4 +746,3 @@ object MoveSuggestion {
   }
 
 }
-

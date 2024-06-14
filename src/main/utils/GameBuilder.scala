@@ -1,7 +1,8 @@
 package main.utils
 
-import main.models.{Color, Piece, Rank}
+import main.models.{Piece}
 
+import main.enums.*
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
@@ -196,6 +197,7 @@ object GameBuilder {
     pieces.addOne(new Piece(1, 4, "BP4", Color.Black, Rank.Pawn, 4, 4))
     pieces.addOne(new Piece(1, 5, "BP5", Color.Black, Rank.Pawn, 3, 5))
     pieces.addOne(new Piece(0, 0, "BR0", Color.Black, Rank.Rook, 5, 0))
+    pieces.addOne(new Piece(0, 7, "BR7", Color.Black, Rank.Rook, 2, 6))
 
     /**
      * setting the white pieces position in board
